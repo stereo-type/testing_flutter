@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/fragments/autorization.dart';
-import 'package:flutter_app_test/fragments/first_fragment.dart';
+import 'package:flutter_app_test/fragments/syllabus.dart';
 import 'package:flutter_app_test/fragments/second_fragment.dart';
 import 'package:flutter_app_test/fragments/third_fragment.dart';
 import 'package:flutter_app_test/utils/settings.dart';
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
     if (token != '0') {
       switch (pos) {
         case 0:
-          return FirstFragment();
+          return Syllabus();
         case 1:
           return SecondFragment();
         case 2:

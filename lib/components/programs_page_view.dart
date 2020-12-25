@@ -4,7 +4,6 @@ import 'package:flutter_app_test/models/program.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
 
-
 getPrograms(context, callback) async {
   var result = await sendPost('getprograms', {});
   if (result['error'] == false) {
@@ -43,25 +42,44 @@ class _programs_page_viewState extends State<programs_page_view> {
     });
   }
 
+  currentProgram() {
+    print('changed');
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    double c_width = MediaQuery.of(context).size.width * 0.8;
     return Container(
       child: PageView(
+          controller: PageController(),
+          onPageChanged: currentProgram() ,
           children: _programs
               .map((program) => Container(
                     child: Row(
                       children: [
-                        Icon(Icons.school),
-                        Text(program.name),
+                        Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                            child: Icon(
+                              Icons.school,
+                              color: Theme.of(context).accentColor,
+                              size: 24,
+                            )),
+                        Expanded(
+                          child: Text(program.name,
+                              style: Theme.of(context).textTheme.headline4),
+                        ),
                       ],
                     ),
                     margin: EdgeInsets.all(10),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                     decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(15)),
                   ))
               .toList()),
-      height: 100,
+      height: 110,
     );
   }
 }
