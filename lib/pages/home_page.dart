@@ -20,11 +20,6 @@ class HomePage extends StatefulWidget {
     DrawerItem("Электронная библиотека", Icons.library_books),
   ];
 
-  // @override
-  // State<StatefulWidget> createState() {
-  //   return  _HomePageState();
-  // }
-
   static _HomePageState of(BuildContext context) =>
       context.ancestorStateOfType(const TypeMatcher<_HomePageState>());
 

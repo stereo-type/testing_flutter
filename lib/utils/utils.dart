@@ -66,7 +66,6 @@ Future sendPost(method, body, {toList = false, hasToken = true}) async {
       'errotText': response.statusCode
     });
   }
-  // return result;
   return responseTreatment(result, toList: toList);
 }
 

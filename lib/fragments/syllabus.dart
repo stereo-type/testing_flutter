@@ -3,15 +3,15 @@ import 'package:flutter_app_test/components/programs_page_view.dart';
 import 'package:flutter_app_test/models/course.dart';
 import 'package:flutter_app_test/utils/utils.dart';
 
-getCourses(context, callback) async {
-  var result = await sendPost('getprograms', {});
+getCourses(context, callback, pid) async {
+  var result = await sendPost('eduplan', {"id": pid.toString()});
   if (result['error'] == false) {
-    var progs = [];
+    var courses = [];
     result['answer'].forEach((arrayItem) {
-      progs.add(Course(int.parse(arrayItem["id"]), arrayItem["name"],
-          int.parse(arrayItem["isfacult"])));
+      courses.add(Course((arrayItem["id"]), arrayItem["name"],
+          (arrayItem["isifer"])));
     });
-    callback(progs);
+    callback(courses);
   } else {
     showToast(context, text: result['answer']);
   }
@@ -20,6 +20,11 @@ getCourses(context, callback) async {
 
 
 class Syllabus extends StatefulWidget {
+  Syllabus({Key key}) : super(key: key);
+
+  static _SyllabusState of(BuildContext context) =>
+      context.ancestorStateOfType(const TypeMatcher<_SyllabusState>());
+
   @override
   _SyllabusState createState() => _SyllabusState();
 }
@@ -28,9 +33,16 @@ class _SyllabusState extends State<Syllabus> {
   List _courses = [];
   int _pid = 0;
 
+  setPid(pid) {
+    setState(() {
+      _pid = pid;
+      getCourses(context, setCourses, _pid);
+    });
+  }
+
   @override
   void initState() {
-    getCourses(context, setCourses);
+    // getCourses(context, setCourses, _pid);
     super.initState();
   }
 

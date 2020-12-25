@@ -1,6 +1,6 @@
 class Course {
-  int id;
+  String id;
   String name;
-  int isfacult;
-  Course(this.id, this.name, this.isfacult);
+  String isifer;
+  Course(this.id, this.name, this.isifer);
 }
