@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/components/programs_page_view.dart';
 import 'package:flutter_app_test/models/course.dart';
@@ -8,16 +9,17 @@ getCourses(context, callback, pid) async {
   if (result['error'] == false) {
     var courses = [];
     result['answer'].forEach((arrayItem) {
-      courses.add(Course((arrayItem["id"]), arrayItem["name"],
-          (arrayItem["isifer"])));
+      courses.add(
+          Course(int.parse(arrayItem["courseid"]), arrayItem["name"], int.parse(arrayItem["isifer"]),
+              arrayItem["url"], int.parse(arrayItem["period"]),
+              arrayItem["iscompeted"], arrayItem["mobileaccess"]
+          ));
     });
     callback(courses);
   } else {
     showToast(context, text: result['answer']);
   }
 }
-
-
 
 class Syllabus extends StatefulWidget {
   Syllabus({Key key}) : super(key: key);
@@ -54,7 +56,6 @@ class _SyllabusState extends State<Syllabus> {
 
   @override
   Widget build(BuildContext context) {
-
     return new Column(
       // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -76,10 +77,19 @@ class _SyllabusState extends State<Syllabus> {
         ),
         Expanded(
           child: ListView.builder(
-              physics: BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(10),
-              itemCount: _courses.length,
-              itemBuilder: (course, index) => Text(_courses[index].name)),
+            physics: BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(10),
+            itemCount: _courses.length,
+            itemBuilder: (course, index) => Card(
+              child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Column(children: [Text(_courses[index].name)])),
+              margin: EdgeInsets.all(5),
+              // shadowColor: Colors.lightBlueAccent,
+              elevation: 5,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
         )
       ],
     );

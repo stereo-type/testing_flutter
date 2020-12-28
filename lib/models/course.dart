@@ -1,6 +1,20 @@
 class Course {
-  String id;
+  int courseid;
   String name;
-  String isifer;
-  Course(this.id, this.name, this.isifer);
+  int isifer;
+  String url;
+  int period;
+
+  bool iscompleted;
+  bool mobileaccess;
+
+  Course(
+    this.courseid,
+    this.name,
+    this.isifer,
+    this.url,
+      this.period,
+      this.iscompleted,
+      this.mobileaccess,
+  );
 }

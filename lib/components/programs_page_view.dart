@@ -45,7 +45,7 @@ class _programs_page_viewState extends State<programs_page_view> {
 
   setCurrentPid(itemid) {
     setState(() {
-      _pid =  _programs[itemid].id;
+      _pid =  _programs[itemid].pid;
       Syllabus.of(context).setPid(_pid);
     });
   }

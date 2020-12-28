@@ -1,6 +1,6 @@
 class Programm {
-  int id;
+  int pid;
   String name;
   int isfacult;
-  Programm(this.id, this.name, this.isfacult);
+  Programm(this.pid, this.name, this.isfacult);
 }
