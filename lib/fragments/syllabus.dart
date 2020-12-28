@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/components/programs_page_view.dart';
+import 'package:flutter_app_test/components/custom_divider.dart';
 import 'package:flutter_app_test/models/course.dart';
+import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
 
 getCourses(context, callback, pid) async {
@@ -9,11 +11,19 @@ getCourses(context, callback, pid) async {
   if (result['error'] == false) {
     var courses = [];
     result['answer'].forEach((arrayItem) {
-      courses.add(
-          Course(int.parse(arrayItem["courseid"]), arrayItem["name"], int.parse(arrayItem["isifer"]),
-              arrayItem["url"], int.parse(arrayItem["period"]),
-              arrayItem["iscompeted"], arrayItem["mobileaccess"]
-          ));
+      var teachers = arrayItem["teachers"];
+      courses.add(Course(
+        int.parse(arrayItem["courseid"]),
+        arrayItem["name"],
+        int.parse(arrayItem["isifer"]),
+        arrayItem["url"],
+        int.parse(arrayItem["period"]),
+        arrayItem["iscompeted"],
+        arrayItem["mobileaccess"],
+        (!teachers.isEmpty) ? (teachers[0]["lastname"] ?? '') : '',
+        (!teachers.isEmpty) ? (teachers[0]["firstname"] ?? '') : '',
+        (!teachers.isEmpty) ? (teachers[0]["pictureurl"] ?? '') : '',
+      ));
     });
     callback(courses);
   } else {
@@ -81,13 +91,33 @@ class _SyllabusState extends State<Syllabus> {
             padding: const EdgeInsets.all(10),
             itemCount: _courses.length,
             itemBuilder: (course, index) => Card(
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(children: [Text(_courses[index].name)])),
+              child: Container(
+                child: ExpansionTile(
+                    tilePadding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                    title: Text(_courses[index].name,
+                        style: TextStyle(
+                            color: textColorNormal,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold)),
+                    childrenPadding: EdgeInsets.fromLTRB(5, 0, 5, 10),
+                    children: [
+                      CustomDivider(),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 10,
+                      ),
+                      Text('Условия доступа:'),
+                      if (_courses[index].teacherfirstname != '')
+                        Text(_courses[index].teacherlastname +
+                            " " +
+                            getInitials(_courses[index].teacherfirstname)),
+                    ]),
+              ),
               margin: EdgeInsets.all(5),
               // shadowColor: Colors.lightBlueAccent,
-              elevation: 5,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              elevation: 7,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
             ),
           ),
         )

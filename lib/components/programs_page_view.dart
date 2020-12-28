@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/models/program.dart';
+import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
 import 'package:flutter_app_test/fragments/syllabus.dart';
 
@@ -30,6 +31,7 @@ class programs_page_view extends StatefulWidget {
 class _programs_page_viewState extends State<programs_page_view> {
   List _programs = [];
   int _pid = 0;
+  int _position = 0;
 
   @override
   void initState() {
@@ -45,7 +47,8 @@ class _programs_page_viewState extends State<programs_page_view> {
 
   setCurrentPid(itemid) {
     setState(() {
-      _pid =  _programs[itemid].pid;
+      _position = itemid;
+      _pid = _programs[itemid].pid;
       Syllabus.of(context).setPid(_pid);
     });
   }
@@ -54,24 +57,28 @@ class _programs_page_viewState extends State<programs_page_view> {
   Widget build(BuildContext context) {
     // double c_width = MediaQuery.of(context).size.width * 0.8;
     return Container(
-      child: PageView.builder(
-        onPageChanged: setCurrentPid,
-        itemCount: _programs.length,
-        itemBuilder: (context, position) {
-          return ProgramItem(programs: _programs, position: position);
-        },
-      ),
-      height: 110,
+      child: Column(children: [
+        Container(
+          child: PageView.builder(
+            onPageChanged: setCurrentPid,
+            itemCount: _programs.length,
+            itemBuilder: (context, position) {
+              return ProgramItem(programs: _programs, position: position);
+            },
+          ),
+          height: 110,
+        ),
+        Text((_position + 1).toString() + '/' + _programs.length.toString())
+      ]),
     );
   }
 }
 
 class ProgramItem extends StatelessWidget {
-  const ProgramItem({
-    Key key,
-    @required List programs,
-    @required int position
-  }) : _programs = programs, _position = position, super(key: key);
+  const ProgramItem({Key key, @required List programs, @required int position})
+      : _programs = programs,
+        _position = position,
+        super(key: key);
   final int _position;
   final List _programs;
 
@@ -88,8 +95,7 @@ class ProgramItem extends StatelessWidget {
                 size: 24,
               )),
           Expanded(
-            child: Text(_programs[_position].name,
-                style: Theme.of(context).textTheme.headline4),
+            child: Text(_programs[_position].name,style: TextStyle(color: secondColor)),
           ),
         ],
       ),

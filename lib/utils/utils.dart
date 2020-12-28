@@ -4,9 +4,8 @@ import 'package:flutter_app_test/utils/settings.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
 
-
 // TOAST
-void showToast(BuildContext context, {String text = null} ) {
+void showToast(BuildContext context, {String text = null}) {
   final scaffold = Scaffold.of(context);
   var msg = (text != null) ? text : "Отсутствует интернет подключение";
   scaffold.showSnackBar(
@@ -25,7 +24,9 @@ class _Api {
   final String error;
   final String errorText;
   final List answer;
+
   _Api({this.code, this.error, this.errorText, this.answer});
+
   factory _Api.fromJson(Map<String, dynamic> json, {toList = false}) =>
       _$ApiFromJson(json, toList: toList);
 
@@ -42,19 +43,18 @@ _Api _$ApiFromJson(Map<String, dynamic> json, {toList = false}) {
 }
 
 Map<String, dynamic> _$ApiToJson(_Api instance) => <String, dynamic>{
-  'errotText': instance.errorText,
-  'error': instance.error,
-  'code': instance.code,
-  'answer': instance.answer
-};
-
+      'errotText': instance.errorText,
+      'error': instance.error,
+      'code': instance.code,
+      'answer': instance.answer
+    };
 
 //POST
 Future sendPost(method, body, {toList = false, hasToken = true}) async {
   var apiDomen = domen;
   var saltApi = salt;
   var apiUrl = '/local/api/mobile.php?salt=$saltApi&method=';
-  var tokenQuery = hasToken? '&token=$token' : '';
+  var tokenQuery = hasToken ? '&token=$token' : '';
   var url = apiDomen + apiUrl + method + tokenQuery;
   // print(url);
   var response = await http.post(url, body: body);
@@ -83,3 +83,8 @@ responseTreatment(resultQuery, {toList = false}) {
   return answer;
 }
 
+getInitials(String firstname) {
+  var arr = firstname.split(" ");
+  var initials = arr[0][0] + "." + arr[1][0] + ".";
+  return initials;
+}
