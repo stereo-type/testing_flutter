@@ -84,7 +84,13 @@ responseTreatment(resultQuery, {toList = false}) {
 }
 
 getInitials(String firstname) {
-  var arr = firstname.split(" ");
-  var initials = arr[0][0] + "." + arr[1][0] + ".";
+  var str = firstname.replaceAll('   ', ' ');
+  str = firstname.replaceAll('  ', ' ');
+  var arr = str.split(" ");
+  var initials;
+  if (arr.length > 1)
+    initials = arr[0][0] + "." + arr[1][0] + ".";
+  else
+    initials = arr[0][0] + ".";
   return initials;
 }

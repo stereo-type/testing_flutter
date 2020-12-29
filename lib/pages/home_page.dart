@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/fragments/autorization.dart';
 import 'package:flutter_app_test/fragments/syllabus.dart';
-import 'package:flutter_app_test/fragments/second_fragment.dart';
-import 'package:flutter_app_test/fragments/third_fragment.dart';
+import 'package:flutter_app_test/fragments/library.dart';
+import 'package:flutter_app_test/fragments/webinars.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 
 class DrawerItem {
   String title;
   IconData icon;
-
   DrawerItem(this.title, this.icon);
 }
 
 class HomePage extends StatefulWidget {
   final drawerItems = [
     DrawerItem("Учебный план", Icons.school),
+    DrawerItem("Электронная библиотека", Icons.library_books),
     DrawerItem("Календарь вебинаров", Icons.calendar_today),
     DrawerItem("Зачетная книжка", Icons.grading),
-    DrawerItem("Электронная библиотека", Icons.library_books),
   ];
 
   static _HomePageState of(BuildContext context) =>
@@ -37,6 +36,23 @@ class _HomePageState extends State<HomePage> {
   void _onBottomItemTapped(int index) {
     setState(() {
       _selectedBotomIndex = index;
+      if (token != '0') {
+        switch (index) {
+          case 0:
+            Navigator.pushNamed(context, '/');
+            break;
+          case 1:
+            Navigator.pushNamed(context, '/library');
+            break;
+          case 2:
+            break;
+          default:
+            return Text("Error");
+        }
+      } else {
+        hideBars();
+        return Autorization();
+      }
     });
   }
 
@@ -69,9 +85,9 @@ class _HomePageState extends State<HomePage> {
         case 0:
           return Syllabus();
         case 1:
-          return SecondFragment();
+          return Library();
         case 2:
-          return ThirdFragment();
+          return Webinars();
 
         default:
           return Text("Error");
@@ -93,7 +109,7 @@ class _HomePageState extends State<HomePage> {
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
       drawerOptions.add(ListTile(
-        leading: Icon(d.icon),
+        leading: Icon(d.icon, color: mainColor),
         title: Text(d.title),
         selected: i == _selectedDrawerIndex,
         onTap: () => _onSelectItem(i),
@@ -103,9 +119,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         appBar: _show
             ? AppBar(
-                // here we display the title corresponding to the fragment
-                // you can instead choose to have a static title
-                title: Text(widget.drawerItems[_selectedDrawerIndex].title),
+                backgroundColor: secondColor,
+                iconTheme: IconThemeData(color: textColorNormal),
+                title: Image.asset(
+                  'assets/images/logoheader.png',
+                  width: 150,
+                  height: 60,
+                ),
               )
             : PreferredSize(child: Container(), preferredSize: Size(0.0, 0.0)),
         drawer: Drawer(

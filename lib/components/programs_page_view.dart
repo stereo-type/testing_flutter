@@ -21,14 +21,19 @@ getPrograms(context, callback) async {
 
 class programs_page_view extends StatefulWidget {
   const programs_page_view({
-    Key key,
-  }) : super(key: key);
+    Key key,  @required Function callback
+  }) : _callback = callback,
+        super(key: key);
+  final Function _callback;
 
   @override
-  _programs_page_viewState createState() => _programs_page_viewState();
+  _programs_page_viewState createState() => _programs_page_viewState(_callback);
 }
 
 class _programs_page_viewState extends State<programs_page_view> {
+  _programs_page_viewState(Function callback) : _callback = callback;
+  final Function _callback;
+
   List _programs = [];
   int _pid = 0;
   int _position = 0;
@@ -42,6 +47,7 @@ class _programs_page_viewState extends State<programs_page_view> {
   setProgramms(programs) {
     setState(() {
       _programs = programs;
+      _callback(_programs[_position].pid);
     });
   }
 
@@ -49,7 +55,7 @@ class _programs_page_viewState extends State<programs_page_view> {
     setState(() {
       _position = itemid;
       _pid = _programs[itemid].pid;
-      Syllabus.of(context).setPid(_pid);
+      _callback(_programs[_position].pid);
     });
   }
 
@@ -66,7 +72,7 @@ class _programs_page_viewState extends State<programs_page_view> {
               return ProgramItem(programs: _programs, position: position);
             },
           ),
-          height: 110,
+          height: 115,
         ),
         Text((_position + 1).toString() + '/' + _programs.length.toString())
       ]),
@@ -95,7 +101,8 @@ class ProgramItem extends StatelessWidget {
                 size: 24,
               )),
           Expanded(
-            child: Text(_programs[_position].name,style: TextStyle(color: secondColor)),
+            child: Text(_programs[_position].name,style: TextStyle(color: secondColor,
+                fontWeight: FontWeight.w500, fontSize: 14)),
           ),
         ],
       ),

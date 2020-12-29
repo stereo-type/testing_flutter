@@ -2,6 +2,9 @@ import 'package:flutter_app_test/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 
+import 'fragments/library.dart';
+import 'fragments/webinars.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -28,7 +31,12 @@ class MyApp extends StatelessWidget {
           bodyText2: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal, color: textColorNormal),
         ),
       ),
-      home: HomePage(),
+      // home: HomePage(),
+      routes: {
+        '/': (context)=> HomePage(),
+        '/webinars' : (context)=> Webinars(),
+        '/library' : (context)=> Library(),
+      },
     );
   }
 }

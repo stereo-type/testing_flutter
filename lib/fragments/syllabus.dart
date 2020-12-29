@@ -45,17 +45,16 @@ class _SyllabusState extends State<Syllabus> {
   List _courses = [];
   int _pid = 0;
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   setPid(pid) {
     setState(() {
       _pid = pid;
       getCourses(context, setCourses, _pid);
     });
-  }
-
-  @override
-  void initState() {
-    // getCourses(context, setCourses, _pid);
-    super.initState();
   }
 
   setCourses(courses) {
@@ -77,7 +76,7 @@ class _SyllabusState extends State<Syllabus> {
                 Text("Программы", style: Theme.of(context).textTheme.headline2),
           ),
         ),
-        programs_page_view(),
+        programs_page_view(callback: this.setPid),
         Align(
           alignment: Alignment.topLeft,
           child: Padding(
@@ -93,24 +92,79 @@ class _SyllabusState extends State<Syllabus> {
             itemBuilder: (course, index) => Card(
               child: Container(
                 child: ExpansionTile(
+                    maintainState: true,
+                    initiallyExpanded: false,
                     tilePadding: EdgeInsets.fromLTRB(10, 10, 10, 5),
                     title: Text(_courses[index].name,
                         style: TextStyle(
                             color: textColorNormal,
                             fontSize: 13,
                             fontWeight: FontWeight.bold)),
-                    childrenPadding: EdgeInsets.fromLTRB(5, 0, 5, 10),
+                    childrenPadding: EdgeInsets.fromLTRB(10, 0, 10, 10),
                     children: [
-                      CustomDivider(),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 10,
+                      Column(
+                        children: [
+                          CustomDivider(),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 10,
+                          ),
+                          Text('Условия доступа:'),
+                          Row(
+                            children: [
+                              if (_courses[index].teacherpicture != '')
+                                ClipOval(
+                                  child: Image.network(
+                                    domen + _courses[index].teacherpicture,
+                                    loadingBuilder: (context, child, progress) {
+                                      if (progress == null) return child;
+                                      return CircularProgressIndicator(
+                                        value: progress.expectedTotalBytes !=
+                                                null
+                                            ? progress.cumulativeBytesLoaded /
+                                                progress.expectedTotalBytes
+                                            : null,
+                                      );
+                                    },
+                                    width: 40,
+                                    height: 40,
+                                  ),
+                                ),
+                              if (_courses[index].teacherfirstname != '')
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                  child: Text(
+                                    _courses[index].teacherlastname +
+                                        " " +
+                                        getInitials(
+                                            _courses[index].teacherfirstname),
+                                  ),
+                                )
+                              else
+                                Text(""),
+                              Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  width: 10,
+                                  height: 10,
+                                ),
+                              ),
+                              RaisedButton(
+                                color: mainColor,
+                                padding: EdgeInsets.all(10),
+                                textColor: secondColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(7)),
+                                onPressed: () {},
+                                child: Text('Войти',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17)),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      Text('Условия доступа:'),
-                      if (_courses[index].teacherfirstname != '')
-                        Text(_courses[index].teacherlastname +
-                            " " +
-                            getInitials(_courses[index].teacherfirstname)),
                     ]),
               ),
               margin: EdgeInsets.all(5),
