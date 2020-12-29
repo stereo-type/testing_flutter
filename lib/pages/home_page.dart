@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/fragments/autorization.dart';
+import 'package:flutter_app_test/fragments/grading_book.dart';
 import 'package:flutter_app_test/fragments/syllabus.dart';
 import 'package:flutter_app_test/fragments/library.dart';
 import 'package:flutter_app_test/fragments/webinars.dart';
@@ -45,6 +46,7 @@ class _HomePageState extends State<HomePage> {
             Navigator.pushNamed(context, '/library');
             break;
           case 2:
+            Navigator.pushNamed(context, '/gradingbook');
             break;
           default:
             return Text("Error");
@@ -88,6 +90,8 @@ class _HomePageState extends State<HomePage> {
           return Library();
         case 2:
           return Webinars();
+        case 3:
+          return GradingBook();
 
         default:
           return Text("Error");

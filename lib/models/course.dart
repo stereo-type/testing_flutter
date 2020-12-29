@@ -5,7 +5,7 @@ class Course {
   String url;
   int period;
   bool iscompleted;
-  bool mobileaccess;
+  bool available;
   String teacherlastname;
   String teacherfirstname;
   String teacherpicture;
@@ -17,7 +17,7 @@ class Course {
       this.url,
       this.period,
       this.iscompleted,
-      this.mobileaccess,
+      this.available,
       this.teacherlastname,
       this.teacherfirstname,
       this.teacherpicture);

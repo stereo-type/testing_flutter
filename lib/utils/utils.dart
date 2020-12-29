@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/utils/settings.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:http/http.dart' as http;
 
 // TOAST
@@ -56,7 +58,8 @@ Future sendPost(method, body, {toList = false, hasToken = true}) async {
   var apiUrl = '/local/api/mobile.php?salt=$saltApi&method=';
   var tokenQuery = hasToken ? '&token=$token' : '';
   var url = apiDomen + apiUrl + method + tokenQuery;
-  // print(url);
+  print(url);
+  print(body);
   var response = await http.post(url, body: body);
   var result = response.body;
   if (response.statusCode != 200) {
@@ -67,7 +70,27 @@ Future sendPost(method, body, {toList = false, hasToken = true}) async {
       'errotText': response.statusCode
     });
   }
+  // print(result);
   return responseTreatment(result, toList: toList);
+}
+
+Future downloadsDirectory = DownloadsPathProvider.downloadsDirectory;
+
+Future dowloadFile(fileUrl) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(
+      debug: true // optional: set false to disable printing logs to console
+  );
+
+  final taskId = await FlutterDownloader.enqueue(
+    url: fileUrl,
+    savedDir: downloadsDirectory.toString(),
+    showNotification: true, // show download progress in status bar (for Android)
+    openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+  );
+
+  await FlutterDownloader.loadTasks();
+  // FlutterDownloader.registerCallback(callback);
 }
 
 responseTreatment(resultQuery, {toList = false}) {

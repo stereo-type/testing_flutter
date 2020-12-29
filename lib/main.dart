@@ -2,6 +2,7 @@ import 'package:flutter_app_test/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 
+import 'fragments/grading_book.dart';
 import 'fragments/library.dart';
 import 'fragments/webinars.dart';
 
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         '/': (context)=> HomePage(),
         '/webinars' : (context)=> Webinars(),
         '/library' : (context)=> Library(),
+        '/gradingbook' : (context)=> GradingBook(),
       },
     );
   }

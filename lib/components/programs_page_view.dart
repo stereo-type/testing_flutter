@@ -101,8 +101,8 @@ class ProgramItem extends StatelessWidget {
                 size: 24,
               )),
           Expanded(
-            child: Text(_programs[_position].name,style: TextStyle(color: secondColor,
-                fontWeight: FontWeight.w500, fontSize: 14)),
+            child: Text(_programs[_position].name, style: TextStyle(color: secondColor,
+                fontWeight: FontWeight.w500, fontSize: 14), maxLines: 4, overflow: TextOverflow.ellipsis,),
           ),
         ],
       ),
@@ -110,7 +110,7 @@ class ProgramItem extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
       decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
-          borderRadius: BorderRadius.circular(15)),
+          borderRadius: BorderRadius.circular(7)),
     );
   }
 }
