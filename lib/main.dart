@@ -2,9 +2,9 @@ import 'package:flutter_app_test/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 
-import 'fragments/grading_book.dart';
-import 'fragments/library.dart';
-import 'fragments/webinars.dart';
+import 'pages/grading_book.dart';
+import 'pages/library.dart';
+import 'pages/webinars.dart';
 
 void main() {
   runApp(MyApp());

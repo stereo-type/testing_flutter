@@ -58,8 +58,8 @@ Future sendPost(method, body, {toList = false, hasToken = true}) async {
   var apiUrl = '/local/api/mobile.php?salt=$saltApi&method=';
   var tokenQuery = hasToken ? '&token=$token' : '';
   var url = apiDomen + apiUrl + method + tokenQuery;
-  print(url);
-  print(body);
+  // print(url);
+  // print(body);
   var response = await http.post(url, body: body);
   var result = response.body;
   if (response.statusCode != 200) {

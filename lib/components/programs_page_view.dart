@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_test/models/program.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
-import 'package:flutter_app_test/fragments/syllabus.dart';
+// import 'package:flutter_app_test/fragments/syllabus.dart';
 
 getPrograms(context, callback) async {
   var result = await sendPost('getprograms', {});

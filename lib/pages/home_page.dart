@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_test/fragments/autorization.dart';
-import 'package:flutter_app_test/fragments/grading_book.dart';
-import 'package:flutter_app_test/fragments/syllabus.dart';
-import 'package:flutter_app_test/fragments/library.dart';
-import 'package:flutter_app_test/fragments/webinars.dart';
+import 'file:///D:/flutter/project/flutter_app_test/lib/pages/autorization.dart';
+import 'file:///D:/flutter/project/flutter_app_test/lib/pages/grading_book.dart';
+import 'package:flutter_app_test/pages/syllabus.dart';
+import 'package:flutter_app_test/pages/library.dart';
+import 'package:flutter_app_test/pages/webinars.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 
 class DrawerItem {
   String title;
   IconData icon;
+
   DrawerItem(this.title, this.icon);
 }
 
@@ -28,34 +29,50 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // String _token = '0';
+  GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+
   int _selectedDrawerIndex = 0;
   int _selectedBotomIndex = 0;
+  int _previousBottomIndex = 0;
   ScrollController _scrollBottomBarController = new ScrollController();
   bool _show = false;
+  bool _bottom_menu_clicked = false;
 
   void _onBottomItemTapped(int index) {
     setState(() {
       _selectedBotomIndex = index;
-      if (token != '0') {
-        switch (index) {
-          case 0:
-            Navigator.pushNamed(context, '/');
-            break;
-          case 1:
-            Navigator.pushNamed(context, '/library');
-            break;
-          case 2:
-            Navigator.pushNamed(context, '/gradingbook');
-            break;
-          default:
-            return Text("Error");
-        }
-      } else {
-        hideBars();
-        return Autorization();
-      }
+      _bottom_menu_clicked = true;
     });
+  }
+
+  _getPagesForBottomNav(int index) {
+    if (token != '0') {
+      if(index != 3) {
+        setState(() {
+          _previousBottomIndex = index;
+        });
+      }
+      switch (index) {
+        case 0:
+          return Syllabus();
+          break;
+        case 1:
+          return Library();
+          break;
+        case 2:
+          return GradingBook();
+          break;
+        case 3:
+          _drawerKey.currentState.openDrawer();
+          return _getPagesForBottomNav(_previousBottomIndex);
+          break;
+        default:
+          return Text("Error");
+      }
+    } else {
+      hideBars();
+      return Autorization();
+    }
   }
 
   void showBars() {
@@ -82,23 +99,33 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getDrawerItemWidget(int pos) {
-    if (token != '0') {
-      switch (pos) {
-        case 0:
-          return Syllabus();
-        case 1:
-          return Library();
-        case 2:
-          return Webinars();
-        case 3:
-          return GradingBook();
-
-        default:
-          return Text("Error");
-      }
+    if (_bottom_menu_clicked) {
+      setState(() {
+        _bottom_menu_clicked = false;
+      });
+      return _getPagesForBottomNav(_selectedBotomIndex);
     } else {
-      hideBars();
-      return Autorization();
+      setState(() {
+        _bottom_menu_clicked = false;
+      });
+      if (token != '0') {
+        switch (pos) {
+          case 0:
+            return Syllabus();
+          case 1:
+            return Library();
+          case 2:
+            return Webinars();
+          case 3:
+            return GradingBook();
+
+          default:
+            return Text("Error");
+        }
+      } else {
+        hideBars();
+        return Autorization();
+      }
     }
   }
 
@@ -121,6 +148,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
+        key: _drawerKey,
         appBar: _show
             ? AppBar(
                 backgroundColor: secondColor,
