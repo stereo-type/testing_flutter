@@ -29,7 +29,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   int _selectedDrawerIndex = 0;
   int _selectedBotomIndex = 0;
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
           return GradingBook();
           break;
         case 3:
-          _drawerKey.currentState.openDrawer();
+          _scaffoldKey.currentState.openDrawer();
           return _getPagesForBottomNav(_previousBottomIndex);
           break;
         default:
@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
-        key: _drawerKey,
+        key: _scaffoldKey,
         appBar: _show
             ? AppBar(
                 backgroundColor: secondColor,

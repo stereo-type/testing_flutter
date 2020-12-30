@@ -74,6 +74,18 @@ Future sendPost(method, body, {toList = false, hasToken = true}) async {
   return responseTreatment(result, toList: toList);
 }
 
+class NavigationService {
+  final GlobalKey<NavigatorState> navigatorKey =
+  new GlobalKey<NavigatorState>();
+  Future<dynamic> navigateTo(String routeName) {
+    return navigatorKey.currentState.pushNamed(routeName);
+  }
+
+}
+  // void setupLocator() {
+  //   locator.registerLazySingleton(() => NavigationService());
+  // }
+
 Future downloadsDirectory = DownloadsPathProvider.downloadsDirectory;
 
 Future dowloadFile(fileUrl) async {
