@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_test/models/lib_webinar.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -52,8 +54,9 @@ Map<String, dynamic> _$ApiToJson(_Api instance) => <String, dynamic>{
     };
 
 //POST
-Future sendPost(method, body, {toList = false, hasToken = true}) async {
-  var apiDomen = domen;
+Future sendPost(method, body,
+    {toList = false, hasToken = true, test = false}) async {
+  var apiDomen = test ? test_domen : domen;
   var saltApi = salt;
   var apiUrl = '/local/api/mobile.php?salt=$saltApi&method=';
   var tokenQuery = hasToken ? '&token=$token' : '';
@@ -62,6 +65,7 @@ Future sendPost(method, body, {toList = false, hasToken = true}) async {
   // print(body);
   var response = await http.post(url, body: body);
   var result = response.body;
+  // print(result);
   if (response.statusCode != 200) {
     result = jsonEncode({
       'error': true,
@@ -76,15 +80,15 @@ Future sendPost(method, body, {toList = false, hasToken = true}) async {
 
 class NavigationService {
   final GlobalKey<NavigatorState> navigatorKey =
-  new GlobalKey<NavigatorState>();
+      new GlobalKey<NavigatorState>();
+
   Future<dynamic> navigateTo(String routeName) {
     return navigatorKey.currentState.pushNamed(routeName);
   }
-
 }
-  // void setupLocator() {
-  //   locator.registerLazySingleton(() => NavigationService());
-  // }
+// void setupLocator() {
+//   locator.registerLazySingleton(() => NavigationService());
+// }
 
 Future downloadsDirectory = DownloadsPathProvider.downloadsDirectory;
 
@@ -92,13 +96,15 @@ Future dowloadFile(fileUrl) async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(
       debug: true // optional: set false to disable printing logs to console
-  );
+      );
 
   final taskId = await FlutterDownloader.enqueue(
     url: fileUrl,
     savedDir: downloadsDirectory.toString(),
-    showNotification: true, // show download progress in status bar (for Android)
-    openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+    showNotification: true,
+    // show download progress in status bar (for Android)
+    openFileFromNotification:
+        true, // click on notification to open downloaded file (for Android)
   );
 
   await FlutterDownloader.loadTasks();
@@ -128,4 +134,44 @@ getInitials(String firstname) {
   else
     initials = arr[0][0] + ".";
   return initials;
+}
+
+getWebinars(context, callback, params, [need_common_data = true]) async {
+  var result = await sendPost('getwebinars', params);
+  if (result['error'] == false) {
+    var data = result['answer'][0];
+    var current_list_data = result['answer'];
+    if (need_common_data) {
+      var state = data['state'];
+      var total_count = int.parse(data['count'].toString());
+      var current_page = int.parse(data['page'].toString());
+      var per_page = int.parse(data['perpage'].toString());
+      current_list_data = data['list'];
+    }
+    var webinars = [];
+    current_list_data.forEach((arrayItem) {
+      webinars.add(LibWebinar(
+          int.parse(arrayItem["id"].toString()),
+          arrayItem["title"],
+          arrayItem["author"],
+          arrayItem["video"],
+          arrayItem["poster"],
+          arrayItem["description"],
+          arrayItem["shorttitle"],
+          arrayItem["autorpic"],
+          arrayItem["videohttps"]));
+    });
+    callback(webinars);
+  } else {
+    showToast(context, text: result['answer']);
+  }
+}
+
+
+Timer setTimeout(callback, [int duration = 1000]) {
+  return Timer(Duration(milliseconds: duration), callback);
+}
+
+void clearTimeout(Timer t) {
+  t.cancel();
 }

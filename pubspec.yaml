@@ -27,6 +27,9 @@ dependencies:
   json_annotation: ^3.0.0
   flutter_downloader: ^1.5.2
   downloads_path_provider: ^0.1.0
+  better_player: ^0.0.42
+#  video_player: ^1.0.1
+#  video_player_controls: ^2.1.6
 
 
   # The following adds the Cupertino Icons font to your application.

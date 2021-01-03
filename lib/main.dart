@@ -1,3 +1,4 @@
+import 'package:flutter_app_test/fragments/library_item.dart';
 import 'package:flutter_app_test/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/utils/settings.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
       // navigatorKey: navigationService.navigatorKey,
       routes: {
         '/': (context)=> HomePage(),
+        // '/item': (context)=> LibraryItem(),
       },
     );
   }

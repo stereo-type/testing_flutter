@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 var domen =  'https://sdo.adpo.edu.ru';
+var test_domen =  'https://slava.sdo.support';
 const salt = 'HGDGJHSJSJJSJ7777ssd';
 var token = '0';
 const mainColor = Color(0xFF2875BC);
