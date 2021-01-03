@@ -34,12 +34,11 @@ class MyApp extends StatelessWidget {
           bodyText2: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal, color: textColorNormal),
         ),
       ),
-      // home: HomePage(),
+      home: HomePage(),
       // navigatorKey: navigationService.navigatorKey,
-      routes: {
+      /*routes: {
         '/': (context)=> HomePage(),
-        // '/item': (context)=> LibraryItem(),
-      },
+      },*/
     );
   }
 }

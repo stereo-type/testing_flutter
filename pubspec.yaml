@@ -28,6 +28,8 @@ dependencies:
   flutter_downloader: ^1.5.2
   downloads_path_provider: ^0.1.0
   better_player: ^0.0.42
+  badges: ^1.1.6
+  webview_flutter: ^1.0.7
 #  video_player: ^1.0.1
 #  video_player_controls: ^2.1.6
 

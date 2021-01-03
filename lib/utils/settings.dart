@@ -4,6 +4,8 @@ var domen =  'https://sdo.adpo.edu.ru';
 var test_domen =  'https://slava.sdo.support';
 const salt = 'HGDGJHSJSJJSJ7777ssd';
 var token = '0';
+
+final navigationMain = GlobalKey<NavigatorState>();
 const mainColor = Color(0xFF2875BC);
 const availableColor = Color(0xFF81BC27);
 const unAvailableColor = Color(0xFF808080);

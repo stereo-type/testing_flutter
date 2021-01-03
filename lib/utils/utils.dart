@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_test/models/course.dart';
 import 'package:flutter_app_test/models/lib_webinar.dart';
+import 'package:flutter_app_test/models/sections.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -122,49 +124,6 @@ responseTreatment(resultQuery, {toList = false}) {
     answer['answer'] = result.errorText;
   }
   return answer;
-}
-
-getInitials(String firstname) {
-  var str = firstname.replaceAll('   ', ' ');
-  str = firstname.replaceAll('  ', ' ');
-  var arr = str.split(" ");
-  var initials;
-  if (arr.length > 1)
-    initials = arr[0][0] + "." + arr[1][0] + ".";
-  else
-    initials = arr[0][0] + ".";
-  return initials;
-}
-
-getWebinars(context, callback, params, [need_common_data = true]) async {
-  var result = await sendPost('getwebinars', params);
-  if (result['error'] == false) {
-    var data = result['answer'][0];
-    var current_list_data = result['answer'];
-    if (need_common_data) {
-      var state = data['state'];
-      var total_count = int.parse(data['count'].toString());
-      var current_page = int.parse(data['page'].toString());
-      var per_page = int.parse(data['perpage'].toString());
-      current_list_data = data['list'];
-    }
-    var webinars = [];
-    current_list_data.forEach((arrayItem) {
-      webinars.add(LibWebinar(
-          int.parse(arrayItem["id"].toString()),
-          arrayItem["title"],
-          arrayItem["author"],
-          arrayItem["video"],
-          arrayItem["poster"],
-          arrayItem["description"],
-          arrayItem["shorttitle"],
-          arrayItem["autorpic"],
-          arrayItem["videohttps"]));
-    });
-    callback(webinars);
-  } else {
-    showToast(context, text: result['answer']);
-  }
 }
 
 

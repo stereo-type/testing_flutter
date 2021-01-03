@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_test/fragments/library_item.dart';
+import 'package:flutter_app_test/pages/course.dart';
 import 'file:///D:/flutter/project/flutter_app_test/lib/pages/autorization.dart';
 import 'file:///D:/flutter/project/flutter_app_test/lib/pages/grading_book.dart';
 import 'package:flutter_app_test/pages/syllabus.dart';
 import 'package:flutter_app_test/pages/library.dart';
 import 'package:flutter_app_test/pages/webinars.dart';
+import 'package:flutter_app_test/pages/webview.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 
 class DrawerItem {
@@ -45,12 +48,16 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void updateWidget() {
+    setState(() {});
+  }
+
   _getPagesForBottomNav(int index) {
     if (token != '0') {
-      if(index != 3) {
-        setState(() {
-          _previousBottomIndex = index;
-        });
+      if (index != 3) {
+        // setState(() {
+        _previousBottomIndex = index;
+        // });
       }
       switch (index) {
         case 0:
@@ -63,14 +70,17 @@ class _HomePageState extends State<HomePage> {
           return GradingBook();
           break;
         case 3:
-          _scaffoldKey.currentState.openDrawer();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scaffoldKey.currentState.openDrawer();
+          });
+
           return _getPagesForBottomNav(_previousBottomIndex);
           break;
         default:
           return Text("Error");
       }
     } else {
-      hideBars();
+      // hideBars();
       return Autorization();
     }
   }
@@ -99,15 +109,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getDrawerItemWidget(int pos) {
-    if (_bottom_menu_clicked) {
-      setState(() {
+/*    if (_bottom_menu_clicked) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
         _bottom_menu_clicked = false;
+        });
       });
       return _getPagesForBottomNav(_selectedBotomIndex);
     } else {
-      setState(() {
-        _bottom_menu_clicked = false;
-      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _bottom_menu_clicked = false;
+        });
+      });*/
       if (token != '0') {
         switch (pos) {
           case 0:
@@ -123,15 +137,25 @@ class _HomePageState extends State<HomePage> {
             return Text("Error");
         }
       } else {
-        hideBars();
+        // hideBars();
         return Autorization();
-      }
+      // }
     }
   }
 
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
     Navigator.of(context).pop(); // close the drawer
+  }
+
+  _onPopUp() {
+    if (navigationMain.currentState.canPop()) {
+      updateWidget();
+      navigationMain.currentState.pop('/');
+      return false;
+    } else {
+      return true;
+    }
   }
 
   @override
@@ -151,6 +175,17 @@ class _HomePageState extends State<HomePage> {
         key: _scaffoldKey,
         appBar: _show
             ? AppBar(
+                leading: Builder(
+                  builder: (context) => (!navigationMain.currentState.canPop())
+                      ? IconButton(
+                          icon: Icon(Icons.menu_rounded),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          onPressed: _onPopUp,
+                        ),
+                ),
                 backgroundColor: secondColor,
                 iconTheme: IconThemeData(color: textColorNormal),
                 title: Image.asset(
@@ -169,7 +204,43 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        body: _getDrawerItemWidget(_selectedDrawerIndex),
+        body: WillPopScope(
+          onWillPop: () {
+            _onPopUp();
+          },
+          child: Navigator(
+            key: navigationMain,
+            initialRoute: '/',
+            onGenerateRoute: (RouteSettings settings) {
+              WidgetBuilder builder;
+              // Manage your route names here
+              switch (settings.name) {
+                case '/':
+                  builder = (BuildContext context) =>
+                      _getDrawerItemWidget(_selectedDrawerIndex);
+                  break;
+                case '/libraryitem':
+                  builder = (BuildContext context) => LibraryItem();
+                  break;
+                case '/course':
+                  builder = (BuildContext context) => CoursePage();
+                  break;
+                case '/webview':
+                  builder = (BuildContext context) => WebViewPage();
+                  break;
+                default:
+                  throw Exception('Invalid route: ${settings.name}');
+              }
+              // You can also return a PageRouteBuilder and
+              // define custom transitions between pages
+              if (settings.name != '/') updateWidget();
+              return MaterialPageRoute(
+                builder: builder,
+                settings: settings,
+              );
+            },
+          ),
+        ),
         bottomNavigationBar: _show
             ? Container(
                 decoration: BoxDecoration(

@@ -3,6 +3,7 @@ import 'package:flutter_app_test/fragments/library_item.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
 import 'package:flutter_app_test/models/lib_webinar.dart';
+import 'package:flutter_app_test/utils/common.dart';
 import 'package:flutter_app_test/components/page_header.dart';
 
 // import 'package:flutter_app_test/components/custom_divider.dart';
@@ -37,10 +38,9 @@ class _LibraryState extends State<Library> {
 
   _goToItem(LibWebinar webinar) {
     print(webinar.webinarid); //
-    _navigatonLibrary.currentState
-        .pushNamed('/item', arguments: {"webinar": webinar});
-    // print(_navigatonLibrary.currentState.canPop());
-    // Navigator.of(context).pushNamed('/item');
+    // _navigatonLibrary.currentState
+    navigationMain.currentState
+        .pushNamed('/libraryitem', arguments: {"webinar": webinar});
   }
 
   _goToList() {
@@ -50,7 +50,9 @@ class _LibraryState extends State<Library> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return LibraryList();
+
+/*      WillPopScope(
       onWillPop: () { _goToList(); },
       child: Navigator(
         key: _navigatonLibrary,
@@ -76,7 +78,7 @@ class _LibraryState extends State<Library> {
           );
         },
       ),
-    );
+    );*/
   }
 
   Column LibraryList() {

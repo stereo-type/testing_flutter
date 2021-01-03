@@ -1,11 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_test/components/my_button.dart';
-import 'package:flutter_app_test/pages/library.dart';
-import 'package:flutter_app_test/utils/settings.dart';
-import 'package:flutter_app_test/utils/utils.dart';
-import 'package:flutter_app_test/models/lib_webinar.dart';
 import 'package:flutter_app_test/components/page_header.dart';
+import 'package:flutter_app_test/utils/common.dart';
 
 class LibraryItem extends StatefulWidget {
   @override

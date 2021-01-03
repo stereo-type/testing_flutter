@@ -1,87 +1,72 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_test/models/program.dart';
 import 'package:flutter_app_test/utils/settings.dart';
-import 'package:flutter_app_test/utils/utils.dart';
 
 import 'my_icon_button.dart';
-// import 'package:flutter_app_test/fragments/syllabus.dart';
 
-getPrograms(context, callback) async {
-  var result = await sendPost('getprograms', {});
-  if (result['error'] == false) {
-    var progs = [];
-    result['answer'].forEach((arrayItem) {
-      progs.add(Programm(int.parse(arrayItem["id"]), arrayItem["name"],
-          int.parse(arrayItem["isfacult"])));
-    });
-    callback(progs);
-  } else {
-    showToast(context, text: result['answer']);
-  }
-}
-
-class programs_page_view extends StatefulWidget {
-  const programs_page_view({Key key, @required Function callback})
+class sections_page_view extends StatefulWidget {
+  const sections_page_view(
+      {Key key, @required Function callback, @required List sections})
       : _callback = callback,
+        _sections = sections,
         super(key: key);
   final Function _callback;
+  final List _sections;
 
   @override
-  _programs_page_viewState createState() => _programs_page_viewState(_callback);
+  _sections_page_viewState createState() =>
+      _sections_page_viewState(_callback, _sections);
 }
 
-class _programs_page_viewState extends State<programs_page_view> {
-  _programs_page_viewState(Function callback) : _callback = callback;
+class _sections_page_viewState extends State<sections_page_view> {
+  _sections_page_viewState(Function callback, List sections)
+      : _callback = callback,
+        _sections = sections;
   final Function _callback;
+  final List _sections;
 
-  List _programs = [];
-  int _pid = 0;
   int _position = 0;
-  PageController _pageController;
+  PageController _sectionController;
 
   @override
   void initState() {
-    getPrograms(context, setProgramms);
-    _pageController =
-        PageController(initialPage: _position, keepPage: true);
+    setSections(_sections);
+    _sectionController = PageController(initialPage: 0, keepPage: true);
     super.initState();
   }
 
-  setProgramms(programs) {
+  setSections(sections) {
     setState(() {
-      _programs = programs;
-      _callback(_programs[_position].pid);
+      _callback(sections[_position].sectionid);
     });
   }
 
-  setCurrentPid(itemid) {
+  setCurrentSectionId(itemid) {
     setState(() {
       _position = itemid;
-      _pid = _programs[itemid].pid;
-      _callback(_programs[_position].pid);
+      _callback(_sections[_position].sectionid);
     });
   }
 
-  _goToPreviousProgramm([forColor = false]) {
+  _goToPreviousSection([forColor = false]) {
     if (forColor) {
       if (_position == 0)
         return null;
       else
         return true;
     }
-    _pageController.animateToPage(_position - 1,
+    _sectionController.animateToPage(_position - 1,
         duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 
-  _goToNextProgramm([forColor = false]) {
+  _goToNextSection([forColor = false]) {
     if (forColor) {
-      if (_position + 1 == _programs.length)
+      if (_position + 1 == _sections.length)
         return null;
       else
         return true;
     }
-    _pageController.animateToPage(_position + 1,
+    _sectionController.animateToPage(_position + 1,
         duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 
@@ -91,57 +76,56 @@ class _programs_page_viewState extends State<programs_page_view> {
     return Container(
       child: Column(children: [
         Container(
-          // color: Colors.green[100],
           padding: EdgeInsets.only(left: 10, right: 10),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          child: Row(children: [
             MyIconButton(
                 icon: Icon(
                   Icons.arrow_back_ios_rounded,
-                  color: (_goToPreviousProgramm(true) == null)
+                  color: (_goToPreviousSection(true) == null)
                       ? unAvailableColor
                       : mainColor,
                   size: 18,
                 ),
-                callback: (_goToPreviousProgramm(true) == null)
+                callback: (_goToPreviousSection(true) == null)
                     ? null
-                    : _goToPreviousProgramm),
+                    : _goToPreviousSection),
             Expanded(
               child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: setCurrentPid,
-                itemCount: _programs.length,
+                controller: _sectionController,
+                onPageChanged: setCurrentSectionId,
+                itemCount: _sections.length,
                 itemBuilder: (context, position) {
-                  return ProgramItem(programs: _programs, position: position);
+                  return SectionItem(sections: _sections, position: position);
                 },
               ),
             ),
             MyIconButton(
                 icon: Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: (_goToNextProgramm(true) == null)
+                  color: (_goToNextSection(true) == null)
                       ? unAvailableColor
                       : mainColor,
                   size: 18,
                 ),
-                callback: (_goToNextProgramm(true) == null)
+                callback: (_goToNextSection(true) == null)
                     ? null
-                    : _goToNextProgramm),
+                    : _goToNextSection),
           ]),
-          height: 115,
+          height: 100,
         ),
-        Text((_position + 1).toString() + '/' + _programs.length.toString())
+        Text((_position + 1).toString() + '/' + _sections.length.toString())
       ]),
     );
   }
 }
 
-class ProgramItem extends StatelessWidget {
-  const ProgramItem({Key key, @required List programs, @required int position})
-      : _programs = programs,
+class SectionItem extends StatelessWidget {
+  const SectionItem({Key key, @required List sections, @required int position})
+      : _sections = sections,
         _position = position,
         super(key: key);
   final int _position;
-  final List _programs;
+  final List _sections;
 
   @override
   Widget build(BuildContext context) {
@@ -157,18 +141,18 @@ class ProgramItem extends StatelessWidget {
               )),
           Expanded(
             child: Text(
-              _programs[_position].name,
+              _sections[_position].name,
               style: TextStyle(
                   color: secondColor,
                   fontWeight: FontWeight.w500,
                   fontSize: 14),
-              maxLines: 4,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
       ),
-      margin: EdgeInsets.fromLTRB(2, 10, 2, 10),
+      margin: EdgeInsets.all(10),
       padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
       decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
