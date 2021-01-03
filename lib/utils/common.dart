@@ -1,7 +1,19 @@
 import 'package:flutter_app_test/models/course.dart';
 import 'package:flutter_app_test/models/lib_webinar.dart';
+import 'package:flutter_app_test/models/modules.dart';
 import 'package:flutter_app_test/models/sections.dart';
+import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
+
+navigateToModule(Module module) {
+  switch (module.moduletype) {
+    default:
+      navigationMain.currentState.pushNamed('/webview',
+          arguments: {"url": domen + module.moduleurl});
+      break;
+  }
+}
+
 
 getInitials(String firstname) {
   var str = firstname.replaceAll('   ', ' ');
@@ -95,6 +107,15 @@ getModulesOfSection(allmodules, sectionid) {
   List modules = [];
   allmodules.forEach((item) {
     if(item.sectionid == sectionid)
+      modules.add(item);
+  });
+  return modules;
+}
+
+getModulesWithoutSection(allmodules) {
+  List modules = [];
+  allmodules.forEach((item) {
+    if(item.sectionname == '')
       modules.add(item);
   });
   return modules;

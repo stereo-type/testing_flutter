@@ -45,12 +45,11 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   List _courses = [];
   List _modules = [];
-  List _current_modules = [];
-
-  // List _sections = [Section(1, 'Test')];
   List _sections = [];
-  int _courseid = 0;
+  List _offsections = [];
+  List _current_modules = [];
   int _pid = 0;
+  int _courseid = 0;
   int _sectionid = 0;
 
   @override
@@ -82,6 +81,7 @@ class _CoursePageState extends State<CoursePage> {
     setState(() {
       _modules = modules;
       _sections = getSectionsFromModuleList(_modules);
+      _offsections = getModulesWithoutSection(_modules);
     });
   }
 
@@ -92,15 +92,6 @@ class _CoursePageState extends State<CoursePage> {
         _current_modules = getModulesOfSection(_modules, _sectionid);
       });
     });
-  }
-
-  _goToModule(Module module) {
-    switch (module.moduletype) {
-      default:
-        navigationMain.currentState.pushNamed('/webview',
-            arguments: {"url": domen + module.moduleurl});
-        break;
-    }
   }
 
   @override
@@ -119,62 +110,113 @@ class _CoursePageState extends State<CoursePage> {
       // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // page_header(header: 'Курс', paddings: [10, 10, 10, 0]),
-        (_courses.length > 0) ? CourseInfo(courses: _courses) : Text(''),
-        (_sections.length > 0)
-            ? sections_page_view(
-                callback: this.setSectionid, sections: _sections)
+        (_courses.length > 0)
+            ? CourseInfo(courses: _courses, offsections: _offsections)
             : Text(''),
-        // sections_page_view(callback: this.setSectionid, sections: _sections),
-        page_header(header: 'Модули', paddings: [10, 0, 10, 0]),
-        Expanded(
-          child: Container(
-            child: ListView.builder(
-              physics: BouncingScrollPhysics(),
-              padding: const EdgeInsets.all(10),
-              itemCount: _current_modules.length,
-              itemBuilder: (item, index) => Card(
-                child: InkWell(
-                  onTap: () => _goToModule(_current_modules[index]),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(children: [
-                      Image.network(
-                        _current_modules[index].moduleicon,
-                        loadingBuilder: (context, child, progress) {
-                          if (progress == null) return child;
-                          return CircularProgressIndicator(
-                            value: progress.expectedTotalBytes != null
-                                ? progress.cumulativeBytesLoaded /
-                                    progress.expectedTotalBytes
-                                : null,
-                          );
-                        },
-                        height: 25,
-                        width: 25,
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(15, 5, 10, 5),
-                          child: Text(
-                            _current_modules[index].modulename,
-                            maxLines: 4,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 13),
-                          ),
-                        ),
-                      ),
-                    ]),
+        // (_sections.length > 0)
+        //     ? sections_page_view(
+        //         callback: this.setSectionid, sections: _sections)
+        //     : Text(''),
+        // page_header(header: 'Модули', paddings: [10, 0, 10, 0]),
+        // Expanded(
+        //   child: ModulesList(current_modules: _current_modules, vertical: true),
+        // ),
+      ],
+    );
+  }
+}
+
+class ModulesList extends StatelessWidget {
+  const ModulesList({
+    Key key,
+    @required List current_modules,
+    @required bool vertical = true,
+  })  : _current_modules = current_modules,
+        _orientation_vertical = vertical,
+        super(key: key);
+
+  final List _current_modules;
+  final bool _orientation_vertical;
+
+  @override
+  Widget build(BuildContext context) {
+    Map _settings;
+    ScrollController _scrolController;
+
+    var settings = {
+      "vertical": {
+        "cardColor": Colors.white,
+        "mainPaddings": 10.0,
+        "innerPaddings": 10.0,
+        "iconSize": 25.0,
+        "elevation": 7.0,
+        "scrollbarAlwaisShown": false,
+      },
+      "horizontal": {
+        "mainPaddings": 2.0,
+        "innerPaddings": 5.0,
+        "cardColor": Colors.yellow[200],
+        "iconSize": 18.0,
+        "elevation": 1.0,
+        "scrollbarAlwaisShown": true,
+      }
+    };
+
+    _settings =
+        _orientation_vertical ? settings["vertical"] : settings["horizontal"];
+    _scrolController = ScrollController();
+
+    return Container(
+      child: Scrollbar(
+        thickness: 4,
+        radius: Radius.circular(4),
+        isAlwaysShown: _settings["scrollbarAlwaisShown"],
+        controller: _scrolController,
+        child: ListView.builder(
+          controller: _scrolController,
+          scrollDirection:
+              _orientation_vertical ? Axis.vertical : Axis.horizontal,
+          physics: BouncingScrollPhysics(),
+          padding: EdgeInsets.all(_settings["mainPaddings"]),
+          itemCount: _current_modules.length,
+          itemBuilder: (item, index) => Card(
+            color: _settings["cardColor"],
+            child: InkWell(
+              onTap: () => navigateToModule(_current_modules[index]),
+              child: Container(
+                padding: EdgeInsets.all(_settings["innerPaddings"]),
+                child: Row(children: [
+                  Image.network(
+                    _current_modules[index].moduleicon,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return CircularProgressIndicator(
+                        value: progress.expectedTotalBytes != null
+                            ? progress.cumulativeBytesLoaded /
+                                progress.expectedTotalBytes
+                            : null,
+                      );
+                    },
+                    height: _settings["iconSize"],
+                    width: _settings["iconSize"],
                   ),
-                ),
-                margin: EdgeInsets.all(5),
-                elevation: 7,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(7)),
+                  _orientation_vertical
+                      ? Expanded(
+                          child: ModuleItem(
+                              current_modules: _current_modules, index: index),
+                        )
+                      : ModuleItem(
+                          current_modules: _current_modules, index: index),
+                ]),
               ),
             ),
+            margin: EdgeInsets.all(5),
+            elevation: _settings["elevation"],
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
           ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -183,15 +225,18 @@ class CourseInfo extends StatelessWidget {
   const CourseInfo({
     Key key,
     @required List courses,
+    @required List offsections,
   })  : _courses = courses,
+        _offsections = offsections,
         super(key: key);
 
   final List _courses;
+  final List _offsections;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // color: Colors.red[100],
+      color: Colors.green[100],
       padding: EdgeInsets.all(10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,11 +277,45 @@ class CourseInfo extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  SizedBox(
+                  ),
+                  (_offsections.length > 0)
+                      ? Container(
+                          height: 50,
+                          child: ModulesList(
+                              current_modules: _offsections, vertical: false))
+                      : Text("")
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ModuleItem extends StatelessWidget {
+  const ModuleItem({
+    Key key,
+    @required List current_modules,
+    @required int index,
+  })  : _current_modules = current_modules,
+        _index = index,
+        super(key: key);
+
+  final List _current_modules;
+  final int _index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(15, 5, 10, 5),
+      child: Text(
+        _current_modules[_index].modulename,
+        maxLines: 4,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: 13),
       ),
     );
   }
