@@ -79,6 +79,7 @@ getCourses(context, callback, pid, [courseid = 0]) async {
           (!teachers.isEmpty) ? (teachers[0]["lastname"] ?? '') : '',
           (!teachers.isEmpty) ? (teachers[0]["firstname"] ?? '') : '',
           (!teachers.isEmpty) ? (teachers[0]["pictureurl"] ?? '') : '',
+          (arrayItem["ifer"] != null) ? arrayItem["ifer"] : [{"name" : "", "assess": true}],
         ));
       }
     });

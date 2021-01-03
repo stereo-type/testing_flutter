@@ -9,6 +9,7 @@ class Course {
   String teacherlastname;
   String teacherfirstname;
   String teacherpicture;
+  List iffer;
 
   Course(
       this.courseid,
@@ -20,5 +21,7 @@ class Course {
       this.available,
       this.teacherlastname,
       this.teacherfirstname,
-      this.teacherpicture);
+      this.teacherpicture,
+      this.iffer
+      );
 }

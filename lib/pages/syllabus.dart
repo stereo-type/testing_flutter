@@ -56,145 +56,199 @@ class _SyllabusState extends State<Syllabus> {
             ? CircularProgressIndicator(
                 backgroundColor: mainColor,
               )
-            : Expanded(
-                child: ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  padding: const EdgeInsets.all(10),
-                  itemCount: _courses.length,
-                  itemBuilder: (course, index) => Card(
-                    child: Container(
-                      padding: EdgeInsets.only(left: 7.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(7.0),
-                        color: _courses[index].available
-                            ? availableColor
-                            : unAvailableColor,
-                      ),
-                      child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(7.0),
-                                bottomRight: Radius.circular(7.0)),
-                            color: Colors.white,
-                          ),
-                          child: Container(
-                            child: ExpansionTile(
-                                maintainState: true,
-                                initiallyExpanded: false,
-                                tilePadding: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                                title: Text(_courses[index].name,
-                                    style: TextStyle(
-                                        color: textColorNormal,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold)),
-                                childrenPadding:
-                                    EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                children: [
-                                  Column(
-                                    children: [
-                                      CustomDivider(),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        height: 10,
-                                      ),
-                                      Text('Условия доступа:'),
-                                      Row(
-                                        children: [
-                                          if (_courses[index].teacherpicture !=
-                                              '')
-                                            ClipOval(
-                                              child: Image.network(
-                                                domen +
-                                                    _courses[index]
-                                                        .teacherpicture,
-                                                loadingBuilder:
-                                                    (context, child, progress) {
-                                                  if (progress == null)
-                                                    return child;
-                                                  return CircularProgressIndicator(
-                                                    value: progress
-                                                                .expectedTotalBytes !=
-                                                            null
-                                                        ? progress
-                                                                .cumulativeBytesLoaded /
-                                                            progress
-                                                                .expectedTotalBytes
-                                                        : null,
-                                                  );
-                                                },
-                                                width: 40,
-                                                height: 40,
-                                              ),
-                                            ),
-                                          if (_courses[index]
-                                                  .teacherfirstname !=
-                                              '')
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  15, 0, 0, 0),
-                                              child: Text(
-                                                _courses[index]
-                                                        .teacherlastname +
-                                                    " " +
-                                                    getInitials(_courses[index]
-                                                        .teacherfirstname),
-                                              ),
-                                            )
-                                          else
-                                            Text(""),
-                                          Expanded(
-                                            flex: 1,
-                                            child: SizedBox(
-                                              width: 10,
-                                              height: 10,
-                                            ),
-                                          ),
-                                          MyButton(
-                                              text: 'Войти',
-                                              callback: _courses[index]
-                                                      .available
-                                                  ? () {
-                                                      navigationMain
-                                                          .currentState
-                                                          .pushNamed('/course',
-                                                              arguments: {
-                                                            "course":
-                                                                _courses[index],
-                                                            "pid": _pid
-                                                          });
-                                                    }
-                                                  : null)
-                                          /*RaisedButton(
-                                      color: mainColor,
-                                      padding: EdgeInsets.all(10),
-                                      textColor: secondColor,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(7)),
-                                      onPressed:_courses[index].available ? () {
-                                        navigationMain.currentState
-                                          .pushNamed('/course', arguments: {"course": _courses[index]});} : null,
-                                      child: Text('Войти',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 17)),
-                                    ),*/
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ]),
-                          )),
-                    ),
-                    margin: EdgeInsets.all(5),
-                    // shadowColor: Colors.lightBlueAccent,
-                    elevation: 7,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                ),
-              )
+            : CourseList(courses: _courses, pid: _pid),
       ],
+    );
+  }
+}
+
+class CourseList extends StatelessWidget {
+  const CourseList({
+    Key key,
+    @required List courses,
+    @required int pid,
+  })  : _courses = courses,
+        _pid = pid,
+        super(key: key);
+
+  final List _courses;
+  final int _pid;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Expanded(
+        child: ListView.builder(
+          physics: BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(10),
+          itemCount: _courses.length,
+          itemBuilder: (course, index) =>
+              CourseItem(courses: _courses, pid: _pid, index: index),
+        ),
+      ),
+    );
+  }
+}
+
+class CourseItem extends StatelessWidget {
+  const CourseItem({
+    Key key,
+    @required List courses,
+    @required int pid,
+    @required int index,
+  })  : _courses = courses,
+        _pid = pid,
+        _index = index,
+        super(key: key);
+
+  final List _courses;
+  final int _pid;
+  final int _index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Container(
+        padding: EdgeInsets.only(left: 7.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(7.0),
+          color: _courses[_index].available ? availableColor : unAvailableColor,
+        ),
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(7.0),
+                  bottomRight: Radius.circular(7.0)),
+              color: Colors.white,
+            ),
+            child: Container(
+              child: ExpansionTile(
+                  maintainState: true,
+                  initiallyExpanded: false,
+                  tilePadding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                  title: Text(_courses[_index].name,
+                      style: TextStyle(
+                          color: textColorNormal,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold)),
+                  childrenPadding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomDivider(),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 10,
+                        ),
+                        _courses[_index].available
+                            ? Text("")
+                            : Container(
+                                margin: EdgeInsets.only(top: 5, bottom: 10),
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: alarmBackgroundColor,
+                                  borderRadius: BorderRadius.circular(7),
+                                ),
+                                child: Text(
+                                  'У вас нет доступа к дисциплине. '
+                                  'Для доступа необходимо выполнение условий',
+                                  style: TextStyle(color: alarmTextColor),
+                                ),
+                              ),
+                        Text('Условия доступа:'),
+                        if (_courses[_index].iffer != null &&
+                            _courses[_index].iffer.length > 0)
+                          Container(
+                            // height: double.parse(
+                            //     (_courses[index].iffer.length *
+                            //             20)
+                            //         .toString()),
+                            margin: EdgeInsets.only(top: 10, bottom: 10),
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: _courses[_index].iffer.length,
+                                itemBuilder: (item, ifferIndex) => Padding(
+                                      padding:
+                                          EdgeInsets.only(top: 0, bottom: 0),
+                                      child: Row(children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 5),
+                                          child: _courses[_index]
+                                                  .iffer[ifferIndex]["access"]
+                                              ? Icon(Icons.check,
+                                                  color: availableColor)
+                                              : Icon(Icons.close,
+                                                  color: alarmColor),
+                                        ),
+                                        Expanded(
+                                          child: Text(_courses[_index]
+                                              .iffer[ifferIndex]["name"]),
+                                        ),
+                                      ]),
+                                    )),
+                          ),
+                        Row(
+                          children: [
+                            if (_courses[_index].teacherpicture != '')
+                              ClipOval(
+                                child: Image.network(
+                                  domen + _courses[_index].teacherpicture,
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null) return child;
+                                    return CircularProgressIndicator(
+                                      value: progress.expectedTotalBytes != null
+                                          ? progress.cumulativeBytesLoaded /
+                                              progress.expectedTotalBytes
+                                          : null,
+                                    );
+                                  },
+                                  width: 40,
+                                  height: 40,
+                                ),
+                              ),
+                            if (_courses[_index].teacherfirstname != '')
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                child: Text(
+                                  _courses[_index].teacherlastname +
+                                      " " +
+                                      getInitials(
+                                          _courses[_index].teacherfirstname),
+                                ),
+                              )
+                            else
+                              Text(""),
+                            Expanded(
+                              flex: 1,
+                              child: SizedBox(
+                                width: 10,
+                                height: 10,
+                              ),
+                            ),
+                            MyButton(
+                                text: 'Войти',
+                                callback: _courses[_index].available
+                                    ? () {
+                                        navigationMain.currentState
+                                            .pushNamed('/course', arguments: {
+                                          "course": _courses[_index],
+                                          "pid": _pid
+                                        });
+                                      }
+                                    : null)
+                          ],
+                        ),
+                      ],
+                    ),
+                  ]),
+            )),
+      ),
+      margin: EdgeInsets.all(5),
+      // shadowColor: Colors.lightBlueAccent,
+      elevation: 7,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 }

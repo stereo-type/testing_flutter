@@ -113,14 +113,14 @@ class _CoursePageState extends State<CoursePage> {
         (_courses.length > 0)
             ? CourseInfo(courses: _courses, offsections: _offsections)
             : Text(''),
-        // (_sections.length > 0)
-        //     ? sections_page_view(
-        //         callback: this.setSectionid, sections: _sections)
-        //     : Text(''),
-        // page_header(header: 'Модули', paddings: [10, 0, 10, 0]),
-        // Expanded(
-        //   child: ModulesList(current_modules: _current_modules, vertical: true),
-        // ),
+        (_sections.length > 0)
+            ? sections_page_view(
+                callback: this.setSectionid, sections: _sections)
+            : Text(''),
+        page_header(header: 'Модули', paddings: [10, 0, 10, 0]),
+        Expanded(
+          child: ModulesList(current_modules: _current_modules, vertical: true),
+        ),
       ],
     );
   }
@@ -236,60 +236,62 @@ class CourseInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.green[100],
       padding: EdgeInsets.all(10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          (_courses[0].teacherpicture != '')
-              ? ClipOval(
-                  child: Image.network(
-                    domen + _courses[0].teacherpicture,
-                    loadingBuilder: (context, child, progress) {
-                      if (progress == null) return child;
-                      return CircularProgressIndicator(
-                        value: progress.expectedTotalBytes != null
-                            ? progress.cumulativeBytesLoaded /
-                                progress.expectedTotalBytes
-                            : null,
-                      );
-                    },
-                    width: 100,
-                    height: 100,
-                  ),
-                )
-              : Text(''),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(left: 15),
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(_courses[0].name,
-                      style: Theme.of(context).textTheme.headline3,
-                      maxLines: 5,
-                      overflow: TextOverflow.ellipsis),
-                  Text(
-                    _courses[0].teacherlastname +
-                        " " +
-                        _courses[0].teacherfirstname,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(
-                  ),
-                  (_offsections.length > 0)
-                      ? Container(
-                          height: 50,
-                          child: ModulesList(
-                              current_modules: _offsections, vertical: false))
-                      : Text("")
-                ],
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            (_courses[0].teacherpicture != '')
+                ? ClipOval(
+                    child: Image.network(
+                      domen + _courses[0].teacherpicture,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return CircularProgressIndicator(
+                          value: progress.expectedTotalBytes != null
+                              ? progress.cumulativeBytesLoaded /
+                                  progress.expectedTotalBytes
+                              : null,
+                        );
+                      },
+                      width: 100,
+                      height: 100,
+                    ),
+                  )
+                : Text(''),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 15, right: 5),
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(_courses[0].name,
+                        style: Theme.of(context).textTheme.headline3,
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis),
+                    Text(
+                      _courses[0].teacherlastname +
+                          " " +
+                          _courses[0].teacherfirstname,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    (_offsections.length > 0)
+                        ? Container(
+                            height: 50,
+                            child: ModulesList(
+                                current_modules: _offsections, vertical: false))
+                        : Text("")
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -315,7 +317,8 @@ class ModuleItem extends StatelessWidget {
         _current_modules[_index].modulename,
         maxLines: 4,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontSize: 13),
+        style: Theme.of(context).textTheme.bodyText2,
+        // style: TextStyle(fontSize: 14),
       ),
     );
   }

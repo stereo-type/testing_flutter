@@ -85,6 +85,7 @@ class Webinars extends StatefulWidget {
 class _WebinarsState extends State<Webinars> {
   List _webinars = [];
   List _sertificats = [];
+  static bool _loading = false;
   static int _pid = 0;
 
   @override
@@ -94,6 +95,7 @@ class _WebinarsState extends State<Webinars> {
 
   setPid(pid) {
     setState(() {
+      _loading = true;
       _pid = pid;
       getWebinars(context, setWebinars, _pid);
       getSertificats(context, setSertificats, _pid);
@@ -103,6 +105,7 @@ class _WebinarsState extends State<Webinars> {
   setWebinars(webinars) {
     setState(() {
       _webinars = webinars;
+      _loading = false;
     });
   }
 
@@ -182,125 +185,150 @@ class _TabControllerState extends State<TabController> {
                             fontWeight: FontWeight.bold))),
               ],
             ),
-            Expanded(
-              child: TabBarView(
-                children: <Widget>[
-                  Container(
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      padding: const EdgeInsets.all(10),
-                      itemCount: widget._webinars.length,
-                      itemBuilder: (course, index) => Card(
-                        child: Container(
-                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          child: ExpansionTile(
-                            initiallyExpanded: true,
-                            title: Text(widget._webinars[index].name,
-                                style: TextStyle(
-                                    color: textColorNormal,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold)),
-                            children: [
-                              Column(
-                                children: [
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 10,
-                                  ),
-                                  CustomDivider(),
-                                  if (widget._webinars[index].webinarid != 0)
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(15, 10, 10, 10),
-                                      child: Row(
+            (_WebinarsState._loading)
+                ? Padding(
+                    padding: EdgeInsets.all(20),
+                    child: CircularProgressIndicator(
+                      backgroundColor: mainColor,
+                    ),
+                  )
+                : Container(
+                    child: Expanded(
+                      child: TabBarView(
+                        children: <Widget>[
+                          Container(
+                            child: ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              padding: const EdgeInsets.all(10),
+                              itemCount: widget._webinars.length,
+                              itemBuilder: (course, index) => Card(
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                  child: ExpansionTile(
+                                    initiallyExpanded: true,
+                                    title: Text(widget._webinars[index].name,
+                                        style: TextStyle(
+                                            color: textColorNormal,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold)),
+                                    children: [
+                                      Column(
                                         children: [
-                                          Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  0, 0, 15, 0),
-                                              child: Text(
-                                                  widget._webinars[index].day)),
                                           SizedBox(
-                                            width: 2,
-                                            height: 30,
-                                            child: DecoratedBox(
-                                                decoration: BoxDecoration(
-                                                    color: Colors.grey)),
+                                            width: double.infinity,
+                                            height: 10,
                                           ),
-                                          Padding(
+                                          CustomDivider(),
+                                          if (widget
+                                                  ._webinars[index].webinarid !=
+                                              0)
+                                            Padding(
                                               padding: EdgeInsets.fromLTRB(
-                                                  15, 0, 0, 0),
-                                              child: Text(widget
-                                                  ._webinars[index].time)),
-                                          Expanded(
-                                            flex: 1,
-                                            child: SizedBox(
-                                              width: 10,
-                                              height: 10,
-                                            ),
-                                          ),
-                                          MyButton(
-                                              text: (widget._webinars[index]
-                                                          .subscribe ==
-                                                      1)
-                                                  ? 'Отписаться'
-                                                  : 'Подписаться',
-                                              callback: () => _onSubscribe(
-                                                  widget._webinars[index]
-                                                      .webinarid),
-                                              color: (widget._webinars[index]
-                                                          .subscribe ==
-                                                      1)
-                                                  ? unAvailableColor
-                                                  : mainColor),
+                                                  15, 10, 10, 10),
+                                              child: Row(
+                                                children: [
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              0, 0, 15, 0),
+                                                      child: Text(widget
+                                                          ._webinars[index]
+                                                          .day)),
+                                                  SizedBox(
+                                                    width: 2,
+                                                    height: 30,
+                                                    child: DecoratedBox(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                color: Colors
+                                                                    .grey)),
+                                                  ),
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              15, 0, 0, 0),
+                                                      child: Text(widget
+                                                          ._webinars[index]
+                                                          .time)),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: SizedBox(
+                                                      width: 10,
+                                                      height: 10,
+                                                    ),
+                                                  ),
+                                                  MyButton(
+                                                      text: (widget
+                                                                  ._webinars[
+                                                                      index]
+                                                                  .subscribe ==
+                                                              1)
+                                                          ? 'Отписаться'
+                                                          : 'Подписаться',
+                                                      callback: () =>
+                                                          _onSubscribe(widget
+                                                              ._webinars[index]
+                                                              .webinarid),
+                                                      color: (widget
+                                                                  ._webinars[
+                                                                      index]
+                                                                  .subscribe ==
+                                                              1)
+                                                          ? unAvailableColor
+                                                          : mainColor),
+                                                ],
+                                              ),
+                                            )
+                                          else
+                                            Text(''),
                                         ],
-                                      ),
-                                    )
-                                  else
-                                    Text(''),
-                                ],
-                              )
-                            ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                margin: EdgeInsets.all(5),
+                                // shadowColor: Colors.lightBlueAccent,
+                                elevation: 7,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(7)),
+                              ),
+                            ),
                           ),
-                        ),
-                        margin: EdgeInsets.all(5),
-                        // shadowColor: Colors.lightBlueAccent,
-                        elevation: 7,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7)),
+                          Container(
+                            child: ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              padding: const EdgeInsets.all(10),
+                              itemCount: widget._sertificats.length,
+                              itemBuilder: (course, index) => Card(
+                                child: Container(
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.all(15),
+                                    title:
+                                        Text(widget._sertificats[index].name),
+                                    trailing: (widget._sertificats[index].url !=
+                                            '')
+                                        ? IconButton(
+                                            icon: Icon(
+                                                Icons.picture_as_pdf_sharp,
+                                                color: Colors.red),
+                                            onPressed: () => _onDownload(
+                                                widget._sertificats[index].url),
+                                          )
+                                        : Text(''),
+                                  ),
+                                ),
+                                margin: EdgeInsets.all(5),
+                                // shadowColor: Colors.lightBlueAccent,
+                                elevation: 7,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(7)),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  Container(
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      padding: const EdgeInsets.all(10),
-                      itemCount: widget._sertificats.length,
-                      itemBuilder: (course, index) => Card(
-                        child: Container(
-                          child: ListTile(
-                            contentPadding: EdgeInsets.all(15),
-                            title: Text(widget._sertificats[index].name),
-                            trailing: (widget._sertificats[index].url != '')
-                                ? IconButton(
-                                    icon: Icon(Icons.picture_as_pdf_sharp,
-                                        color: Colors.red),
-                                    onPressed: () => _onDownload(
-                                        widget._sertificats[index].url),
-                                  )
-                                : Text(''),
-                          ),
-                        ),
-                        margin: EdgeInsets.all(5),
-                        // shadowColor: Colors.lightBlueAccent,
-                        elevation: 7,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7)),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                  )
           ],
         ),
       ),
