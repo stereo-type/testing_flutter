@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 var domen =  'https://sdo.adpo.edu.ru';
 var test_domen =  'https://slava.sdo.support';
@@ -16,3 +17,5 @@ const secondColor = Colors.white;
 var textColorNormal = Colors.grey[850];
 var textColorDark = Colors.grey[900];
 var textColorLight = Colors.grey[600];
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;

@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_test/models/course.dart';
-import 'package:flutter_app_test/models/lib_webinar.dart';
-import 'package:flutter_app_test/models/sections.dart';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter_app_test/utils/settings.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:path/path.dart' as path;
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:http/http.dart' as http;
 
 // TOAST
@@ -88,30 +90,6 @@ class NavigationService {
     return navigatorKey.currentState.pushNamed(routeName);
   }
 }
-// void setupLocator() {
-//   locator.registerLazySingleton(() => NavigationService());
-// }
-
-Future downloadsDirectory = DownloadsPathProvider.downloadsDirectory;
-
-Future dowloadFile(fileUrl) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await FlutterDownloader.initialize(
-      debug: true // optional: set false to disable printing logs to console
-      );
-
-  final taskId = await FlutterDownloader.enqueue(
-    url: fileUrl,
-    savedDir: downloadsDirectory.toString(),
-    showNotification: true,
-    // show download progress in status bar (for Android)
-    openFileFromNotification:
-        true, // click on notification to open downloaded file (for Android)
-  );
-
-  await FlutterDownloader.loadTasks();
-  // FlutterDownloader.registerCallback(callback);
-}
 
 responseTreatment(resultQuery, {toList = false}) {
   var result = _Api.fromJson(jsonDecode(resultQuery), toList: toList);
@@ -126,11 +104,130 @@ responseTreatment(resultQuery, {toList = false}) {
   return answer;
 }
 
-
 Timer setTimeout(callback, [int duration = 1000]) {
   return Timer(Duration(milliseconds: duration), callback);
 }
 
 void clearTimeout(Timer t) {
   t.cancel();
+}
+
+//DOWNLOAD
+
+Future<void> downloadFile(String url,
+    [BuildContext context, Function recieveCallback]) async {
+  // final String _fileUrl ='http://lot.services/blog/files/DSCF0277.jpg';
+  final String _fileUrl = url;
+  // print(_fileUrl);
+  final dir = await _getDownloadDirectory();
+  final isPermissionStatusGranted = await _requestPermissions();
+
+  if (isPermissionStatusGranted) {
+    await _startDownload(dir.path, _fileUrl, recieveCallback);
+  } else {
+    if (context != null) showToast(context, text: 'Ошибка загрузки файла');
+  }
+}
+
+Future<Directory> _getDownloadDirectory() async {
+  if (Platform.isAndroid) {
+    return await DownloadsPathProvider.downloadsDirectory;
+  }
+  return await getApplicationDocumentsDirectory();
+}
+
+Future<bool> _requestPermissions() async {
+  var permission =
+      await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+  if (permission != PermissionStatus.granted) {
+    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage);
+  }
+  return permission == PermissionStatus.granted;
+}
+
+Future<void> _startDownload(
+    String pathDir, String fileurl, Function recieveCallback) async {
+  final Dio _dio = Dio();
+  var _filename = await _getFileNameFromUrl(_dio, fileurl);
+  // var _filename = 'asdas.pdf';
+
+  _filename = _getNewFileName(pathDir, _filename).toString();
+  final _savePath = path.join(pathDir, _filename);
+  print(_filename);
+
+  Map<String, dynamic> result = {
+    'isSuccess': false,
+    'filePath': null,
+    'fileName': _filename,
+    'error': null,
+  };
+  // to ask path fo saving;
+  // final params = SaveFileDialogParams(sourceFilePath: "path_of_file_to_save");
+  // final filePath = await FlutterFileDialog.saveFile(params: params);
+  try {
+    final response = await _dio.download(fileurl, _savePath,
+        onReceiveProgress: recieveCallback);
+    result['isSuccess'] = response.statusCode == 200;
+    result['filePath'] = _savePath;
+  } catch (ex) {
+    print(ex);
+    result['error'] = ex.toString();
+  } finally {
+    await showNotificationDownload(result);
+  }
+}
+
+Future<String> _getFileNameFromUrl(Dio dio, String url) async {
+  var filename = '';
+  try {
+    Response response = await dio.head(url);
+    var header = response.headers['content-disposition'][0];
+    RegExp exp =
+        new RegExp(r"""attachment[\s\S]*?filename=[\'\"]?([\s\S]*?)[\'\"]""");
+    var test = exp.allMatches(header).map((m) => m[1]);
+    filename = test.toString().replaceAll(new RegExp(r'[()]'), '');
+  } catch (e) {
+    filename = 'Документ';
+  }
+  if (filename == '') filename = 'Документ';
+  return filename;
+}
+
+_getNewFileName(pathDir, filename) {
+  int num = 1;
+  var newfilename;
+  File file = new File(path.join(pathDir, filename));
+  if (file.existsSync()) {
+    while (file.existsSync()) {
+      var items = filename.split('.');
+      newfilename = items[0] + ' (' + (num++).toString() + ').' + items[1];
+      file = new File(path.join(pathDir, newfilename));
+    }
+  } else {
+    newfilename = filename;
+  }
+  return newfilename;
+}
+
+Future<void> showNotificationDownload(
+    Map<String, dynamic> downloadStatus) async {
+  final android = AndroidNotificationDetails(
+      'channel id', 'channel name', 'channel description',
+      priority: Priority.High, importance: Importance.Max);
+  final iOS = IOSNotificationDetails();
+  final platform = NotificationDetails(android, iOS);
+  final json = jsonEncode(downloadStatus);
+  final isSuccess = downloadStatus['isSuccess'];
+
+  if (flutterLocalNotificationsPlugin != null)
+    await flutterLocalNotificationsPlugin.show(
+        0, // notification id
+        isSuccess ? 'Файл загружен' : 'Ошибка',
+        isSuccess
+            ? 'Файл ' + downloadStatus['fileName'] + ' успешно загружен!'
+            : 'Ошибка при загрузке файла ' + downloadStatus['fileName'],
+        platform,
+        payload: json);
 }

@@ -1,8 +1,7 @@
-import 'package:flutter_app_test/fragments/library_item.dart';
 import 'package:flutter_app_test/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_app_test/utils/settings.dart';
-import 'package:flutter_app_test/utils/utils.dart';
 
 import 'pages/gradingbook.dart';
 import 'pages/library.dart';
@@ -35,10 +34,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: HomePage(),
-      // navigatorKey: navigationService.navigatorKey,
-      /*routes: {
-        '/': (context)=> HomePage(),
-      },*/
+      // home: ExempleDownload(title: 'Flutter Demo Home Page'),
     );
   }
 }

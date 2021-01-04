@@ -11,3 +11,9 @@ import Flutter
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
+
+/* Куда то в didFinishLaunchingWithOptions добавить для работы уведомлений при загрузке файла
+if #available(iOS 10.0, *) {
+     UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+}
+*/

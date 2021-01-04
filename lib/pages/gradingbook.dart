@@ -58,7 +58,6 @@ class _GradingBookState extends State<GradingBook> {
   setGrades(grades) {
     setState(() {
       _grades = grades;
-      print(grades);
       isLoading = false;
     });
   }

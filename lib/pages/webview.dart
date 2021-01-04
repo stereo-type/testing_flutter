@@ -20,7 +20,6 @@ class _WebViewPageState extends State<WebViewPage> {
   @override
   Widget build(BuildContext context) {
     final url = (ModalRoute.of(context).settings.arguments as Map)["url"];
-    print(url);
 
     return WebView(
         initialUrl: url, javascriptMode: JavascriptMode.unrestricted);

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/fragments/library_item.dart';
 import 'package:flutter_app_test/pages/autorization.dart';
@@ -7,7 +9,10 @@ import 'package:flutter_app_test/pages/syllabus.dart';
 import 'package:flutter_app_test/pages/library.dart';
 import 'package:flutter_app_test/pages/webinars.dart';
 import 'package:flutter_app_test/pages/webview.dart';
+import 'package:flutter_app_test/utils/example_download.dart';
 import 'package:flutter_app_test/utils/settings.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:open_file/open_file.dart';
 
 class DrawerItem {
   String title;
@@ -40,6 +45,32 @@ class _HomePageState extends State<HomePage> {
   ScrollController _scrollBottomBarController = new ScrollController();
   bool _show = false;
   bool _bottom_menu_clicked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+   /* final android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    final iOS = IOSInitializationSettings();
+    final initSettings = InitializationSettings(android, iOS);
+    flutterLocalNotificationsPlugin.initialize(initSettings,
+        onSelectNotification: _onSelectNotification);*/
+  }
+
+  Future<void> _onSelectNotification(String json) async {
+    final obj = jsonDecode(json);
+    if (obj['isSuccess']) {
+      OpenFile.open(obj['filePath']);
+    } else {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Error'),
+          content: Text('${obj['error']}'),
+        ),
+      );
+    }
+  }
 
   void _onBottomItemTapped(int index) {
     setState(() {
@@ -109,6 +140,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getDrawerItemWidget(int pos) {
+    // return ExempleDownload(title: 'Flutter Demo Home Page');
 /*    if (_bottom_menu_clicked) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
@@ -122,23 +154,23 @@ class _HomePageState extends State<HomePage> {
           _bottom_menu_clicked = false;
         });
       });*/
-      if (token != '0') {
-        switch (pos) {
-          case 0:
-            return Syllabus();
-          case 1:
-            return Library();
-          case 2:
-            return Webinars();
-          case 3:
-            return GradingBook();
+    if (token != '0') {
+      switch (pos) {
+        case 0:
+          return Syllabus();
+        case 1:
+          return Library();
+        case 2:
+          return Webinars();
+        case 3:
+          return GradingBook();
 
-          default:
-            return Text("Error");
-        }
-      } else {
-        // hideBars();
-        return Autorization();
+        default:
+          return Text("Error");
+      }
+    } else {
+      // hideBars();
+      return Autorization();
       // }
     }
   }

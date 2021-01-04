@@ -7,7 +7,7 @@ import 'package:flutter_app_test/models/certificat.dart';
 import 'package:flutter_app_test/models/webinar.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+// import 'package:flutter_downloader/flutter_downloader.dart';
 
 getWebinars(context, callback, pid) async {
   var result = await sendPost('getwebinars2', {"id": pid.toString()});
@@ -150,6 +150,22 @@ class TabController extends StatefulWidget {
 class _TabControllerState extends State<TabController> {
   var _onSubscribe;
   var _onDownload;
+  double _progress = 0;
+  int _progresbarSize = 40;
+
+  @override
+  void initState() {
+    _progress = 0;
+    super.initState();
+  }
+
+  void _onReceiveProgress(int received, int total) {
+    if (total != -1) {
+      setState(() {
+        _progress =  double.parse((_progresbarSize * received / total).toStringAsFixed(2));
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +176,7 @@ class _TabControllerState extends State<TabController> {
     };
 
     _onDownload = (String url) {
-      // dowloadFile(domen + url);
+      downloadFile(domen + url, context, _onReceiveProgress);
     };
 
     return DefaultTabController(
@@ -307,12 +323,28 @@ class _TabControllerState extends State<TabController> {
                                         Text(widget._sertificats[index].name),
                                     trailing: (widget._sertificats[index].url !=
                                             '')
-                                        ? IconButton(
-                                            icon: Icon(
-                                                Icons.picture_as_pdf_sharp,
-                                                color: Colors.red),
-                                            onPressed: () => _onDownload(
-                                                widget._sertificats[index].url),
+                                        ? Container(
+                                            width: double.parse(_progresbarSize.toString()),
+                                            child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                    Icons.picture_as_pdf_sharp,
+                                                    color: Colors.red),
+                                                onPressed: () => _onDownload(
+                                                    widget._sertificats[index]
+                                                        .url),
+                                              ),
+                                              DecoratedBox(
+                                                  child: SizedBox(
+                                                    height: 3,
+                                                    width: _progress,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(2),
+                                                      color: availableColor))
+                                            ]),
                                           )
                                         : Text(''),
                                   ),
