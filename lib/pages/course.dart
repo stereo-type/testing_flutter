@@ -2,13 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/components/page_header.dart';
 import 'package:flutter_app_test/components/sections_page_view.dart';
-import 'package:flutter_app_test/models/course.dart';
 import 'package:flutter_app_test/models/modules.dart';
-import 'package:flutter_app_test/models/sections.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
 import 'package:flutter_app_test/utils/common.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 getModules(context, callback, courseid) async {
   var result = await sendPost('getcourse', {'id': courseid.toString()});

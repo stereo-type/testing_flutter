@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/fragments/library_item.dart';
+import 'package:flutter_app_test/pages/autorization.dart';
 import 'package:flutter_app_test/pages/course.dart';
-import 'file:///D:/flutter/project/flutter_app_test/lib/pages/autorization.dart';
-import 'file:///D:/flutter/project/flutter_app_test/lib/pages/grading_book.dart';
+import 'package:flutter_app_test/pages/gradingbook.dart';
 import 'package:flutter_app_test/pages/syllabus.dart';
 import 'package:flutter_app_test/pages/library.dart';
 import 'package:flutter_app_test/pages/webinars.dart';
