@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/fragments/library_item.dart';
 import 'package:flutter_app_test/pages/autorization.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_app_test/pages/syllabus.dart';
 import 'package:flutter_app_test/pages/library.dart';
 import 'package:flutter_app_test/pages/webinars.dart';
 import 'package:flutter_app_test/pages/webview.dart';
-import 'package:flutter_app_test/utils/example_download.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_file/open_file.dart';
@@ -259,6 +257,9 @@ class _HomePageState extends State<HomePage> {
                   break;
                 case '/webview':
                   builder = (BuildContext context) => WebViewPage();
+                  break;
+                case '/mvideo':
+                  builder = (BuildContext context) => LibraryItem(isLibrary: false);
                   break;
                 default:
                   throw Exception('Invalid route: ${settings.name}');

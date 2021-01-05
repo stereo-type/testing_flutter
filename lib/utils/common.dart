@@ -6,14 +6,19 @@ import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
 
 navigateToModule(Module module) {
+  // print(module.moduletype);
+  // print(module.moduleid);
   switch (module.moduletype) {
+    case 'mvideo':
+      navigationMain.currentState
+          .pushNamed('/mvideo', arguments: {"id": module.moduleid});
+      break;
     default:
-      navigationMain.currentState.pushNamed('/webview',
-          arguments: {"url": domen + module.moduleurl});
+      navigationMain.currentState
+          .pushNamed('/webview', arguments: {"url": domen + module.moduleurl});
       break;
   }
 }
-
 
 getInitials(String firstname) {
   var str = firstname.replaceAll('   ', ' ');
@@ -27,18 +32,16 @@ getInitials(String firstname) {
   return initials;
 }
 
-getWebinars(context, callback, params, [need_common_data = true]) async {
+getWebinars(context, callback, params) async {
   var result = await sendPost('getwebinars', params);
   if (result['error'] == false) {
     var data = result['answer'][0];
     var current_list_data = result['answer'];
-    if (need_common_data) {
-      var state = data['state'];
-      var total_count = int.parse(data['count'].toString());
-      var current_page = int.parse(data['page'].toString());
-      var per_page = int.parse(data['perpage'].toString());
-      current_list_data = data['list'];
-    }
+    var state = data['state'];
+    var total_count = int.parse(data['count'].toString());
+    var current_page = int.parse(data['page'].toString());
+    var per_page = int.parse(data['perpage'].toString());
+    current_list_data = data['list'];
     var webinars = [];
     current_list_data.forEach((arrayItem) {
       webinars.add(LibWebinar(
@@ -49,7 +52,7 @@ getWebinars(context, callback, params, [need_common_data = true]) async {
           arrayItem["poster"],
           arrayItem["description"],
           arrayItem["shorttitle"],
-          arrayItem["autorpic"],
+          arrayItem["author_pic"],
           arrayItem["videohttps"]));
     });
     callback(webinars);
@@ -79,7 +82,11 @@ getCourses(context, callback, pid, [courseid = 0]) async {
           (!teachers.isEmpty) ? (teachers[0]["lastname"] ?? '') : '',
           (!teachers.isEmpty) ? (teachers[0]["firstname"] ?? '') : '',
           (!teachers.isEmpty) ? (teachers[0]["pictureurl"] ?? '') : '',
-          (arrayItem["ifer"] != null) ? arrayItem["ifer"] : [{"name" : "", "assess": true}],
+          (arrayItem["ifer"] != null)
+              ? arrayItem["ifer"]
+              : [
+                  {"name": "", "assess": true}
+                ],
         ));
       }
     });
@@ -95,7 +102,9 @@ getSectionsFromModuleList(modules) {
   List sectionids = [];
   modules.forEach((arrayItem) {
     var section = Section(arrayItem.sectionid, arrayItem.sectionname);
-    if (arrayItem.sectionname != null && arrayItem.sectionname != '' && sectionids.indexOf(arrayItem.sectionid) == -1) {
+    if (arrayItem.sectionname != null &&
+        arrayItem.sectionname != '' &&
+        sectionids.indexOf(arrayItem.sectionid) == -1) {
       sections.add(section);
       sectionids.add(arrayItem.sectionid);
     }
@@ -107,8 +116,7 @@ getSectionsFromModuleList(modules) {
 getModulesOfSection(allmodules, sectionid) {
   List modules = [];
   allmodules.forEach((item) {
-    if(item.sectionid == sectionid)
-      modules.add(item);
+    if (item.sectionid == sectionid) modules.add(item);
   });
   return modules;
 }
@@ -116,8 +124,7 @@ getModulesOfSection(allmodules, sectionid) {
 getModulesWithoutSection(allmodules) {
   List modules = [];
   allmodules.forEach((item) {
-    if(item.sectionname == '')
-      modules.add(item);
+    if (item.sectionname == '') modules.add(item);
   });
   return modules;
 }

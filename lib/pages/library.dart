@@ -38,6 +38,7 @@ class _LibraryState extends State<Library> {
 
   _goToItem(LibWebinar webinar) {
     // _navigatonLibrary.currentState
+    print(webinar.autorpic);
     navigationMain.currentState
         .pushNamed('/libraryitem', arguments: {"webinar": webinar});
   }

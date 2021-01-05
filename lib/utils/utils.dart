@@ -151,11 +151,10 @@ Future<void> _startDownload(
     String pathDir, String fileurl, Function recieveCallback) async {
   final Dio _dio = Dio();
   var _filename = await _getFileNameFromUrl(_dio, fileurl);
-  // var _filename = 'asdas.pdf';
 
   _filename = _getNewFileName(pathDir, _filename).toString();
   final _savePath = path.join(pathDir, _filename);
-  print(_filename);
+  // print(_filename);
 
   Map<String, dynamic> result = {
     'isSuccess': false,
@@ -172,7 +171,6 @@ Future<void> _startDownload(
     result['isSuccess'] = response.statusCode == 200;
     result['filePath'] = _savePath;
   } catch (ex) {
-    print(ex);
     result['error'] = ex.toString();
   } finally {
     await showNotificationDownload(result);
@@ -181,15 +179,27 @@ Future<void> _startDownload(
 
 Future<String> _getFileNameFromUrl(Dio dio, String url) async {
   var filename = '';
+
+  File file = new File(url);
+  String basename = path.basename(file.path);
+  filename = basename;
+  var items = filename.split('.');
+  List extensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'png', 'zip', 'rar'];
+  if(extensions.contains(items.last)) {
+    filename = Uri.decodeComponent(filename);
+    return filename;
+  }
   try {
     Response response = await dio.head(url);
     var header = response.headers['content-disposition'][0];
     RegExp exp =
-        new RegExp(r"""attachment[\s\S]*?filename=[\'\"]?([\s\S]*?)[\'\"]""");
-    var test = exp.allMatches(header).map((m) => m[1]);
-    filename = test.toString().replaceAll(new RegExp(r'[()]'), '');
+        new RegExp(r"""[\s\S]*?filename=[\'\"]?([\s\S]*?)[\'\"]""");
+    var result = exp.allMatches(header).map((m) => m[1]);
+    filename = result.toString().replaceAll(new RegExp(r'[()]'), '');
   } catch (e) {
-    filename = 'Документ';
+    File file = new File(url);
+    String basename = path.basename(file.path);
+    filename = basename;
   }
   if (filename == '') filename = 'Документ';
   return filename;
@@ -201,8 +211,10 @@ _getNewFileName(pathDir, filename) {
   File file = new File(path.join(pathDir, filename));
   if (file.existsSync()) {
     while (file.existsSync()) {
-      var items = filename.split('.');
-      newfilename = items[0] + ' (' + (num++).toString() + ').' + items[1];
+      List items = filename.split('.');
+      var extension = (items.length > 1) ? ('.' + items.last) : '';
+      items.removeLast();
+      newfilename = items.join('.') + ' (' + (num++).toString() + ')' + extension;
       file = new File(path.join(pathDir, newfilename));
     }
   } else {
