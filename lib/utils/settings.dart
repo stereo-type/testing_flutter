@@ -17,5 +17,6 @@ const secondColor = Colors.white;
 var textColorNormal = Colors.grey[850];
 var textColorDark = Colors.grey[900];
 var textColorLight = Colors.grey[600];
+var textColorLighter = Colors.grey[200];
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;

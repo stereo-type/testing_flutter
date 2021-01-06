@@ -38,7 +38,7 @@ getWebinar(context, callback, params) async {
           arrayItem["title"],
           arrayItem["imgUrl"],
           arrayItem["video"],
-          arrayItem["description"],
+          (arrayItem["description"] !=null)?  arrayItem["description"] : '',
           int.parse(arrayItem["authorid"].toString()),
           (arrayItem["sections"] != null)
               ? arrayItem["sections"]
@@ -184,6 +184,8 @@ class AdditionalInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(item[0].title);
+    print(item[0].description);
     return Flexible(
       flex: 1,
       child: Container(

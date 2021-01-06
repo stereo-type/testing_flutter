@@ -32,35 +32,6 @@ getInitials(String firstname) {
   return initials;
 }
 
-getWebinars(context, callback, params) async {
-  var result = await sendPost('getwebinars', params);
-  if (result['error'] == false) {
-    var data = result['answer'][0];
-    var current_list_data = result['answer'];
-    var state = data['state'];
-    var total_count = int.parse(data['count'].toString());
-    var current_page = int.parse(data['page'].toString());
-    var per_page = int.parse(data['perpage'].toString());
-    current_list_data = data['list'];
-    var webinars = [];
-    current_list_data.forEach((arrayItem) {
-      webinars.add(LibWebinar(
-          int.parse(arrayItem["id"].toString()),
-          arrayItem["title"],
-          arrayItem["author"],
-          arrayItem["video"],
-          arrayItem["poster"],
-          arrayItem["description"],
-          arrayItem["shorttitle"],
-          arrayItem["author_pic"],
-          arrayItem["videohttps"]));
-    });
-    callback(webinars);
-  } else {
-    showToast(context, text: result['answer']);
-  }
-}
-
 getCourses(context, callback, pid, [courseid = 0]) async {
   var result = await sendPost('eduplan', {"id": pid.toString()});
   if (result['error'] == false) {

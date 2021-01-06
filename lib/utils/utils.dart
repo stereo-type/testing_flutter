@@ -66,7 +66,7 @@ Future sendPost(method, body,
   var tokenQuery = hasToken ? '&token=$token' : '';
   var url = apiDomen + apiUrl + method + tokenQuery;
   // print(url);
-  // print(body);
+  print(body);
   var response = await http.post(url, body: body);
   var result = response.body;
   // print(result);
