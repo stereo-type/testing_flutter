@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/components/custom_divider.dart';
 import 'package:flutter_app_test/components/page_header.dart';
+import 'package:flutter_app_test/custom_icons.dart';
 import 'package:flutter_app_test/models/lib_webinar_item.dart';
 import 'package:flutter_app_test/models/modules/mvideo.dart';
 import 'package:flutter_app_test/utils/settings.dart';
@@ -250,7 +251,7 @@ class AdditionalInfo extends StatelessWidget {
                                       : (item[0].sections[index]['st'] !=
                                               'Продолжительность')
                                           ? Icon(
-                                              Icons.cloud_download,
+                                              CustomIcons.papersheet,
                                               size: 35,
                                               color: mainColor,
                                             )

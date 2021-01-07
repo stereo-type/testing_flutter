@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_test/dbhelper/db.dart';
+import 'package:flutter_app_test/fragments/ask_call.dart';
+import 'package:flutter_app_test/fragments/ask_question.dart';
 import 'package:flutter_app_test/fragments/library_item.dart';
 import 'package:flutter_app_test/pages/autorization.dart';
 import 'package:flutter_app_test/pages/course.dart';
@@ -11,6 +14,7 @@ import 'package:flutter_app_test/pages/webview.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_file/open_file.dart';
+import 'package:flutter_app_test/custom_icons.dart';
 
 class DrawerItem {
   String title;
@@ -21,9 +25,9 @@ class DrawerItem {
 
 class HomePage extends StatefulWidget {
   final drawerItems = [
-    DrawerItem("Учебный план", Icons.school),
-    DrawerItem("Электронная библиотека", Icons.library_books),
-    DrawerItem("Календарь вебинаров", Icons.calendar_today),
+    DrawerItem("Учебный план", CustomIcons.study),
+    DrawerItem("Электронная библиотека", CustomIcons.library_icon),
+    DrawerItem("Календарь вебинаров", CustomIcons.calendar),
     DrawerItem("Зачетная книжка", Icons.grading),
   ];
 
@@ -44,11 +48,26 @@ class _HomePageState extends State<HomePage> {
   bool _show = false;
   bool _bottom_menu_clicked = false;
 
+  final db = DatabaseHelper.instance;
+
+  chechToken() async {
+    //todo temp
+    // await db.delete_datebase();
+
+    var count = await db.get_count('token');
+    var records = await db.get_records('token');
+    if (count == 1) {
+      var token = records[0]["token"];
+      setToken(token);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-   /* final android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    chechToken();
+    /* final android = AndroidInitializationSettings('@mipmap/ic_launcher');
     final iOS = IOSInitializationSettings();
     final initSettings = InitializationSettings(android, iOS);
     flutterLocalNotificationsPlugin.initialize(initSettings,
@@ -203,6 +222,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
         key: _scaffoldKey,
+        resizeToAvoidBottomPadding: false,
         appBar: _show
             ? AppBar(
                 leading: Builder(
@@ -249,6 +269,12 @@ class _HomePageState extends State<HomePage> {
                   builder = (BuildContext context) =>
                       _getDrawerItemWidget(_selectedDrawerIndex);
                   break;
+                case '/ask_call':
+                  builder = (BuildContext context) => AskCall();
+                  break;
+                case '/ask_question':
+                  builder = (BuildContext context) => AskQuestion();
+                  break;
                 case '/libraryitem':
                   builder = (BuildContext context) => LibraryItem();
                   break;
@@ -259,7 +285,8 @@ class _HomePageState extends State<HomePage> {
                   builder = (BuildContext context) => WebViewPage();
                   break;
                 case '/mvideo':
-                  builder = (BuildContext context) => LibraryItem(isLibrary: false);
+                  builder =
+                      (BuildContext context) => LibraryItem(isLibrary: false);
                   break;
                 default:
                   throw Exception('Invalid route: ${settings.name}');
@@ -288,19 +315,19 @@ class _HomePageState extends State<HomePage> {
                   type: BottomNavigationBarType.fixed,
                   items: const <BottomNavigationBarItem>[
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.school),
+                      icon: Icon(CustomIcons.user_study),
                       label: 'Курсы',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.my_library_books),
+                      icon: Icon(CustomIcons.library_icon),
                       label: 'Библиотека',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.message),
+                      icon: Icon(CustomIcons.comments_solid),
                       label: 'Сообщения',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.menu),
+                      icon: Icon(CustomIcons.ellipsis_h_solid),
                       label: 'Меню',
                     ),
                   ],

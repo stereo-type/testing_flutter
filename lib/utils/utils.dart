@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -66,7 +67,7 @@ Future sendPost(method, body,
   var tokenQuery = hasToken ? '&token=$token' : '';
   var url = apiDomen + apiUrl + method + tokenQuery;
   // print(url);
-  print(body);
+  // print(body);
   var response = await http.post(url, body: body);
   var result = response.body;
   // print(result);
@@ -184,16 +185,25 @@ Future<String> _getFileNameFromUrl(Dio dio, String url) async {
   String basename = path.basename(file.path);
   filename = basename;
   var items = filename.split('.');
-  List extensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'png', 'zip', 'rar'];
-  if(extensions.contains(items.last)) {
+  List extensions = [
+    'pdf',
+    'doc',
+    'docx',
+    'xls',
+    'xlsx',
+    'jpg',
+    'png',
+    'zip',
+    'rar'
+  ];
+  if (extensions.contains(items.last)) {
     filename = Uri.decodeComponent(filename);
     return filename;
   }
   try {
     Response response = await dio.head(url);
     var header = response.headers['content-disposition'][0];
-    RegExp exp =
-        new RegExp(r"""[\s\S]*?filename=[\'\"]?([\s\S]*?)[\'\"]""");
+    RegExp exp = new RegExp(r"""[\s\S]*?filename=[\'\"]?([\s\S]*?)[\'\"]""");
     var result = exp.allMatches(header).map((m) => m[1]);
     filename = result.toString().replaceAll(new RegExp(r'[()]'), '');
   } catch (e) {
@@ -214,7 +224,8 @@ _getNewFileName(pathDir, filename) {
       List items = filename.split('.');
       var extension = (items.length > 1) ? ('.' + items.last) : '';
       items.removeLast();
-      newfilename = items.join('.') + ' (' + (num++).toString() + ')' + extension;
+      newfilename =
+          items.join('.') + ' (' + (num++).toString() + ')' + extension;
       file = new File(path.join(pathDir, newfilename));
     }
   } else {
@@ -242,4 +253,51 @@ Future<void> showNotificationDownload(
             : 'Ошибка при загрузке файла ' + downloadStatus['fileName'],
         platform,
         payload: json);
+}
+
+extension NavigatorStateExtension on NavigatorState {
+  void pushNamedIfNotCurrent(String routeName, {Object arguments}) {
+    if (!isCurrent(routeName)) {
+      pushNamed(routeName, arguments: arguments);
+    }
+  }
+
+  void pushNamedWithoutHistory(String routeName, {Object arguments}) {
+    if (!isCurrent(routeName)) {
+      pushNamedAndRemoveUntil(routeName, (route) {
+        return route.settings.name == '/' ? true : false;
+      }, arguments: arguments);
+    }
+  }
+
+  bool isCurrent(String routeName) {
+    bool isCurrent = false;
+    popUntil((route) {
+      if (route.settings.name == routeName) {
+        isCurrent = true;
+      }
+      return true;
+    });
+    return isCurrent;
+  }
+}
+
+showAlert(BuildContext context, String title, String content) {
+  return showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text(title),
+          content: Padding(
+              padding: EdgeInsets.only(top: 20),
+              child: Text(content)),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Ок'))
+          ],
+        );
+      });
 }
