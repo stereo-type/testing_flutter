@@ -55,7 +55,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             height: 70,
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            page_header(
+            PageHeader(
               header: 'Восстановление пароля',
               paddings: [0, 0, 0, 0],
             ),

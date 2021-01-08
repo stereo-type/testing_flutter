@@ -21,18 +21,18 @@ getPrograms(context, callback) async {
   }
 }
 
-class programs_page_view extends StatefulWidget {
-  const programs_page_view({Key key, @required Function callback})
+class ProgramsPageView extends StatefulWidget {
+  const ProgramsPageView({Key key, @required Function callback})
       : _callback = callback,
         super(key: key);
   final Function _callback;
 
   @override
-  _programs_page_viewState createState() => _programs_page_viewState(_callback);
+  _ProgramsPageViewState createState() => _ProgramsPageViewState(_callback);
 }
 
-class _programs_page_viewState extends State<programs_page_view> {
-  _programs_page_viewState(Function callback) : _callback = callback;
+class _ProgramsPageViewState extends State<ProgramsPageView> {
+  _ProgramsPageViewState(Function callback) : _callback = callback;
   final Function _callback;
 
   List _programs = [];

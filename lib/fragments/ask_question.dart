@@ -125,7 +125,7 @@ class _AskQuestionState extends State<AskQuestion> {
             height: 70,
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            page_header(header: 'Задать вопрос', paddings: [0, 0, 0, 0]),
+            PageHeader(header: 'Задать вопрос', paddings: [0, 0, 0, 0]),
             IconButton(
               padding: EdgeInsets.all(0),
               alignment: Alignment.centerRight,

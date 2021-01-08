@@ -145,7 +145,7 @@ class _LibraryItemState extends State<LibraryItem> {
       children: [
         Padding(
             padding: EdgeInsets.only(bottom: 10),
-            child: page_header(
+            child: PageHeader(
                 header:
                     widget.isLibrary ? "Электронная библиотека" : _videoName)),
         is_init

@@ -49,9 +49,9 @@ class _SyllabusState extends State<Syllabus> {
     return new Column(
       // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        page_header(header: 'Программы', paddings: [10, 10, 10, 0]),
-        programs_page_view(callback: this.setPid),
-        page_header(header: 'Курсы', paddings: [10, 0, 10, 10]),
+        PageHeader(header: 'Программы', paddings: [10, 10, 10, 0]),
+        ProgramsPageView(callback: this.setPid),
+        PageHeader(header: 'Курсы', paddings: [10, 0, 10, 10]),
         (_loading)
             ? CircularProgressIndicator(
                 backgroundColor: mainColor,

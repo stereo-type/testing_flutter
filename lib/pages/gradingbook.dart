@@ -66,8 +66,8 @@ class _GradingBookState extends State<GradingBook> {
   Widget build(BuildContext context) {
     return new Column(
       children: [
-        page_header(header: "Зачетная книжка"),
-        programs_page_view(callback: this.setPid),
+        PageHeader(header: "Зачетная книжка"),
+        ProgramsPageView(callback: this.setPid),
         Container(
           margin: EdgeInsets.only(left: 15, right: 15, top: 10),
           padding: EdgeInsets.fromLTRB(15, 5, 15, 5),

@@ -114,7 +114,7 @@ class _CoursePageState extends State<CoursePage> {
             ? sections_page_view(
                 callback: this.setSectionid, sections: _sections)
             : Text(''),
-        page_header(header: 'Модули', paddings: [10, 0, 10, 0]),
+        PageHeader(header: 'Модули', paddings: [10, 0, 10, 0]),
         Expanded(
           child: ModulesList(current_modules: _current_modules, vertical: true),
         ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class page_header extends StatelessWidget {
-  page_header(
+class PageHeader extends StatelessWidget {
+  PageHeader(
       {Key key, @required String header, List paddings = const [10, 10, 10, 0]})
       : _header = header,
         _paddings = paddings,

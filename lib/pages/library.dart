@@ -131,7 +131,7 @@ class _LibraryState extends State<Library> {
   Column LibraryList() {
     return new Column(
       children: [
-        page_header(header: "Электронная библиотека"),
+        PageHeader(header: "Электронная библиотека"),
         searchField(setFilter, _textController),
         Expanded(
           child: Container(
