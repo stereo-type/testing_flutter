@@ -93,6 +93,12 @@ class _WebinarsState extends State<Webinars> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    // if(TabController.of(context) != null) TabController.of(context).delete();
+  }
+
   setPid(pid) {
     setState(() {
       _loading = true;
@@ -143,6 +149,9 @@ class TabController extends StatefulWidget {
   final List _sertificats;
   final Function _callback;
 
+  static _TabControllerState of(BuildContext context) =>
+      context.ancestorStateOfType(const TypeMatcher<_TabControllerState>());
+
   @override
   _TabControllerState createState() => _TabControllerState();
 }
@@ -157,6 +166,18 @@ class _TabControllerState extends State<TabController> {
   void initState() {
     _progress = 0;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  void delete() {
+    setState(() {
+      return null;
+    });
   }
 
   void _onReceiveProgress(int received, int total) {
@@ -176,7 +197,7 @@ class _TabControllerState extends State<TabController> {
     };
 
     _onDownload = (String url) {
-      downloadFile(domen + url, context, _onReceiveProgress);
+      downloadFile(DOMAIN + url, context, _onReceiveProgress);
     };
 
     return DefaultTabController(

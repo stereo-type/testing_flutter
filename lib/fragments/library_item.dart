@@ -171,9 +171,9 @@ class AdditionalInfo extends StatelessWidget {
 
   _linkAction(url) {
     if (!url.contains('http')) {
-      var newurl = domen +
+      var newurl = DOMAIN +
           '/local/api/go.php?to=user&token=' +
-          token +
+          TOKEN +
           '&id=' +
           item[0].authorid.toString();
       navigationMain.currentState
@@ -185,8 +185,6 @@ class AdditionalInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(item[0].title);
-    print(item[0].description);
     return Flexible(
       flex: 1,
       child: Container(

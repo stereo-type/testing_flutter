@@ -27,7 +27,7 @@ class AutorizationBottomBar extends StatelessWidget {
             icon: Icon(CustomIcons.go_to_cite, size: 28),
             onPressed: () {
               navigationMain.currentState
-                  .pushNamed('/webview', arguments: {"url": domen});
+                  .pushNamed('/webview', arguments: {"url": DOMAIN});
             },
           ),
           CustomDivider(vertical: true),
@@ -38,7 +38,7 @@ class AutorizationBottomBar extends StatelessWidget {
             icon: Icon(CustomIcons.mobile, size: 28),
             onPressed: () {
               final newRouteName = "/ask_call";
-              Navigator.of(context).pushNamedWithoutHistory(newRouteName);
+              Navigator.of(context).pushNamedWithoutHistoryIfNotCurrent(newRouteName);
             },
           ),
           CustomDivider(vertical: true),
@@ -49,7 +49,7 @@ class AutorizationBottomBar extends StatelessWidget {
             icon: Icon(CustomIcons.question, size: 28),
             onPressed: () {
               final newRouteName = "/ask_question";
-              Navigator.of(context).pushNamedWithoutHistory(newRouteName);
+              Navigator.of(context).pushNamedWithoutHistoryIfNotCurrent(newRouteName);
             },
           ),
         ],

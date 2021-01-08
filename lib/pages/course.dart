@@ -241,7 +241,7 @@ class CourseInfo extends StatelessWidget {
             (_courses[0].teacherpicture != '')
                 ? ClipOval(
                     child: Image.network(
-                      domen + _courses[0].teacherpicture,
+                      DOMAIN + _courses[0].teacherpicture,
                       loadingBuilder: (context, child, progress) {
                         if (progress == null) return child;
                         return CircularProgressIndicator(

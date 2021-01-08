@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-var domen =  'https://sdo.adpo.edu.ru';
+var DOMAIN =  'https://sdo.adpo.edu.ru';
 var test_domen =  'https://slava.sdo.support';
-const salt = 'HGDGJHSJSJJSJ7777ssd';
-var token = '0';
+const SALT = 'HGDGJHSJSJJSJ7777ssd';
+var TOKEN = '0';
+Map<String,dynamic> USER;
 
 final navigationMain = GlobalKey<NavigatorState>();
 const mainColor = Color(0xFF2875BC);

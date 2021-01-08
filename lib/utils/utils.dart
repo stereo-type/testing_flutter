@@ -61,10 +61,10 @@ Map<String, dynamic> _$ApiToJson(_Api instance) => <String, dynamic>{
 //POST
 Future sendPost(method, body,
     {toList = false, hasToken = true, test = false}) async {
-  var apiDomen = test ? test_domen : domen;
-  var saltApi = salt;
+  var apiDomen = test ? test_domen : DOMAIN;
+  var saltApi = SALT;
   var apiUrl = '/local/api/mobile.php?salt=$saltApi&method=';
-  var tokenQuery = hasToken ? '&token=$token' : '';
+  var tokenQuery = hasToken ? '&token=$TOKEN' : '';
   var url = apiDomen + apiUrl + method + tokenQuery;
   // print(url);
   // print(body);
@@ -263,6 +263,13 @@ extension NavigatorStateExtension on NavigatorState {
   }
 
   void pushNamedWithoutHistory(String routeName, {Object arguments}) {
+    pushNamedAndRemoveUntil(routeName, (route) {
+      return route.settings.name == '/' ? true : false;
+    }, arguments: arguments);
+  }
+
+  void pushNamedWithoutHistoryIfNotCurrent(String routeName,
+      {Object arguments}) {
     if (!isCurrent(routeName)) {
       pushNamedAndRemoveUntil(routeName, (route) {
         return route.settings.name == '/' ? true : false;
@@ -288,9 +295,8 @@ showAlert(BuildContext context, String title, String content) {
       builder: (context) {
         return CupertinoAlertDialog(
           title: Text(title),
-          content: Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: Text(content)),
+          content:
+              Padding(padding: EdgeInsets.only(top: 20), child: Text(content)),
           actions: <Widget>[
             FlatButton(
                 onPressed: () {

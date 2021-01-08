@@ -51,7 +51,6 @@ sendQuestion(context, fio, email, questionid, text) async {
     showAlert(context, 'Ваш вопрос отправлен', result['answer'][0]);
     navigationMain.currentState.pop('/');
   } else {
-    print(result['answer']);
     showAlert(context, 'Ошибка отправки формы', result['answer']);
   }
 }

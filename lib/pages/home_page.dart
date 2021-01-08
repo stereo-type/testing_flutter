@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_test/components/my_drawer.dart';
+import 'package:flutter_app_test/components/user_logo.dart';
 import 'package:flutter_app_test/dbhelper/db.dart';
 import 'package:flutter_app_test/fragments/ask_call.dart';
 import 'package:flutter_app_test/fragments/ask_question.dart';
 import 'package:flutter_app_test/fragments/forgot_password.dart';
 import 'package:flutter_app_test/fragments/library_item.dart';
+import 'package:flutter_app_test/models/user.dart';
 import 'package:flutter_app_test/pages/autorization.dart';
 import 'package:flutter_app_test/pages/course.dart';
 import 'package:flutter_app_test/pages/gradingbook.dart';
@@ -12,26 +15,15 @@ import 'package:flutter_app_test/pages/syllabus.dart';
 import 'package:flutter_app_test/pages/library.dart';
 import 'package:flutter_app_test/pages/webinars.dart';
 import 'package:flutter_app_test/pages/webview.dart';
+import 'package:flutter_app_test/utils/common.dart';
+import 'package:flutter_app_test/utils/navigation.dart';
 import 'package:flutter_app_test/utils/settings.dart';
+import 'package:flutter_app_test/utils/utils.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:open_file/open_file.dart';
 import 'package:flutter_app_test/custom_icons.dart';
 
-class DrawerItem {
-  String title;
-  IconData icon;
-
-  DrawerItem(this.title, this.icon);
-}
-
 class HomePage extends StatefulWidget {
-  final drawerItems = [
-    DrawerItem("Учебный план", CustomIcons.study),
-    DrawerItem("Электронная библиотека", CustomIcons.library_icon),
-    DrawerItem("Календарь вебинаров", CustomIcons.calendar),
-    DrawerItem("Зачетная книжка", Icons.grading),
-  ];
-
   static _HomePageState of(BuildContext context) =>
       context.ancestorStateOfType(const TypeMatcher<_HomePageState>());
 
@@ -41,17 +33,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  ScrollController _scrollBottomBarController = new ScrollController();
+  final db = DatabaseHelper.instance;
+  Map<String, dynamic> _user;
 
   int _selectedDrawerIndex = 0;
   int _selectedBotomIndex = 0;
   int _previousBottomIndex = 0;
-  ScrollController _scrollBottomBarController = new ScrollController();
   bool _show = false;
   bool _bottom_menu_clicked = false;
 
-  final db = DatabaseHelper.instance;
-
-  chechToken() async {
+  checkToken() async {
     //todo temp
     // await db.delete_datebase();
 
@@ -63,11 +55,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  setUser() async {
+    _user = (await db.get_records('user'))[0];
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    chechToken();
+    checkToken();
     /* final android = AndroidInitializationSettings('@mipmap/ic_launcher');
     final iOS = IOSInitializationSettings();
     final initSettings = InitializationSettings(android, iOS);
@@ -102,7 +99,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _getPagesForBottomNav(int index) {
-    if (token != '0') {
+    if (TOKEN != '0') {
       if (index != 3) {
         // setState(() {
         _previousBottomIndex = index;
@@ -140,9 +137,16 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void closeDrawer() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scaffoldKey.currentState.openEndDrawer();
+    });
+  }
+
   void hideBars() {
     setState(() {
       _show = false;
+      closeDrawer();
     });
   }
 
@@ -152,12 +156,14 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  setToken(tok) {
-    setState(() => {token = tok});
+  setToken(String newtoken) async {
+    setState(() => {TOKEN = newtoken});
+    await getUserinfo(context, db);
+    USER = (await db.get_records('user'))[0];
     showBars();
   }
 
-  _getDrawerItemWidget(int pos) {
+  getDrawerItemWidget(int pos) {
     // return ExempleDownload(title: 'Flutter Demo Home Page');
 /*    if (_bottom_menu_clicked) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -172,7 +178,7 @@ class _HomePageState extends State<HomePage> {
           _bottom_menu_clicked = false;
         });
       });*/
-    if (token != '0') {
+    if (TOKEN != '0') {
       switch (pos) {
         case 0:
           return Syllabus();
@@ -195,6 +201,9 @@ class _HomePageState extends State<HomePage> {
 
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
+    if (Navigation.of(context) != null) {
+      Navigation.of(context).update();
+    }
     Navigator.of(context).pop(); // close the drawer
   }
 
@@ -210,16 +219,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var drawerOptions = <Widget>[];
-    for (var i = 0; i < widget.drawerItems.length; i++) {
-      var d = widget.drawerItems[i];
-      drawerOptions.add(ListTile(
-        leading: Icon(d.icon, color: mainColor),
-        title: Text(d.title),
-        selected: i == _selectedDrawerIndex,
-        onTap: () => _onSelectItem(i),
-      ));
-    }
+
 
     return Scaffold(
         key: _scaffoldKey,
@@ -239,72 +239,25 @@ class _HomePageState extends State<HomePage> {
                 ),
                 backgroundColor: secondColor,
                 iconTheme: IconThemeData(color: textColorNormal),
-                title: Image.asset(
-                  'assets/images/logoheader.png',
-                  width: 150,
-                  height: 60,
-                ),
+                title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset(
+                        'assets/images/logoheader.png',
+                        width: 150,
+                        height: 60,
+                      ),
+                      userLogo(USER),
+                    ]),
               )
             : PreferredSize(child: Container(), preferredSize: Size(0.0, 0.0)),
-        drawer: Drawer(
-          child: Column(
-            children: <Widget>[
-              UserAccountsDrawerHeader(
-                  accountName: Text("John Doe"), accountEmail: null),
-              Column(children: drawerOptions)
-            ],
-          ),
-        ),
+        drawer: MyDrawer(callback: _onSelectItem, index: _selectedDrawerIndex),
         body: WillPopScope(
-          onWillPop: () {
-            _onPopUp();
-          },
-          child: Navigator(
-            key: navigationMain,
-            initialRoute: '/',
-            onGenerateRoute: (RouteSettings settings) {
-              WidgetBuilder builder;
-              // Manage your route names here
-              switch (settings.name) {
-                case '/':
-                  builder = (BuildContext context) =>
-                      _getDrawerItemWidget(_selectedDrawerIndex);
-                  break;
-                case '/ask_call':
-                  builder = (BuildContext context) => AskCall();
-                  break;
-                case '/ask_question':
-                  builder = (BuildContext context) => AskQuestion();
-                  break;
-                case '/forgot_password':
-                  builder = (BuildContext context) => ForgotPassword();
-                  break;
-                case '/libraryitem':
-                  builder = (BuildContext context) => LibraryItem();
-                  break;
-                case '/course':
-                  builder = (BuildContext context) => CoursePage();
-                  break;
-                case '/webview':
-                  builder = (BuildContext context) => WebViewPage();
-                  break;
-                case '/mvideo':
-                  builder =
-                      (BuildContext context) => LibraryItem(isLibrary: false);
-                  break;
-                default:
-                  throw Exception('Invalid route: ${settings.name}');
-              }
-              // You can also return a PageRouteBuilder and
-              // define custom transitions between pages
-              if (settings.name != '/') updateWidget();
-              return MaterialPageRoute(
-                builder: builder,
-                settings: settings,
-              );
+            onWillPop: () {
+              _onPopUp();
             },
-          ),
-        ),
+            child: Navigation(
+                getDrawerItemWidget, _selectedDrawerIndex, updateWidget)),
         bottomNavigationBar: _show
             ? Container(
                 decoration: BoxDecoration(
@@ -343,3 +296,5 @@ class _HomePageState extends State<HomePage> {
             : Text(""));
   }
 }
+
+

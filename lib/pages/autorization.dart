@@ -1,12 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_test/components/autorization_bottom_bar.dart';
-import 'package:flutter_app_test/components/custom_divider.dart';
 import 'package:flutter_app_test/components/my_button.dart';
 import 'package:flutter_app_test/custom_icons.dart';
 import 'package:flutter_app_test/dbhelper/db.dart';
-import 'package:flutter_app_test/main.dart';
-import 'package:flutter_app_test/pages/course.dart';
 import 'package:flutter_app_test/pages/home_page.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
@@ -85,7 +82,7 @@ class _Autorization extends State<Autorization> {
           ),
           GestureDetector(
             onTap: () {
-             navigationMain.currentState.pushNamedWithoutHistory('/forgot_password');
+             navigationMain.currentState.pushNamedWithoutHistoryIfNotCurrent('/forgot_password');
             },
             child: Text('Забыли пароль?'),
           ),

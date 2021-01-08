@@ -1,13 +1,15 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_app_test/dbhelper/db.dart';
 import 'package:flutter_app_test/models/course.dart';
 import 'package:flutter_app_test/models/lib_webinar.dart';
 import 'package:flutter_app_test/models/modules.dart';
 import 'package:flutter_app_test/models/sections.dart';
+import 'package:flutter_app_test/models/user.dart';
+import 'package:flutter_app_test/pages/home_page.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
 
 navigateToModule(Module module) {
-  // print(module.moduletype);
-  // print(module.moduleid);
   switch (module.moduletype) {
     case 'mvideo':
       navigationMain.currentState
@@ -15,8 +17,22 @@ navigateToModule(Module module) {
       break;
     default:
       navigationMain.currentState
-          .pushNamed('/webview', arguments: {"url": domen + module.moduleurl});
+          .pushNamed('/webview', arguments: {"url": DOMAIN + module.moduleurl});
       break;
+  }
+}
+
+logOut() {
+  TOKEN = '0';
+  BuildContext _context = navigationMain.currentContext;
+  final db = DatabaseHelper.instance;
+  db.delete_datebase();
+  if (Navigator.of(_context).canPop()) {
+    Navigator.of(_context).pop();
+  }
+  if (HomePage.of(_context) != null) {
+    HomePage.of(_context).hideBars();
+    HomePage.of(_context).updateWidget();
   }
 }
 
@@ -98,4 +114,37 @@ getModulesWithoutSection(allmodules) {
     if (item.sectionname == '') modules.add(item);
   });
   return modules;
+}
+
+getUserinfo(BuildContext context, DatabaseHelper db) async {
+  var result = await sendPost('getuserinfo', {}, toList: true);
+  if (result['error'] == false) {
+    var item = result['answer'][0];
+    User user = User(
+      int.parse(item['id'].toString()),
+      item['firstname'],
+      item['lastname'],
+      (item['email'] != null && item['email'] != '' && item['email'] != 'null')
+          ? item['email']
+          : '',
+      (item['phone1'] != null &&
+          item['phone1'] != '' &&
+          item['phone1'] != 'null')
+          ? item['phone1']
+          : '',
+      (item['avatar'] != null &&
+          item['avatar'] != '' &&
+          item['avatar'] != 'null')
+          ? item['avatar']
+          : '',
+      (item['description'] != null &&
+          item['description'] != '' &&
+          item['description'] != 'null')
+          ? item['description']
+          : '',
+    );
+    await db.insert_record('user', user.toMap());
+  } else {
+    showToast(context, text: result['answer']);
+  }
 }
