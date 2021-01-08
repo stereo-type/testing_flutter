@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_test/dbhelper/db.dart';
 import 'package:flutter_app_test/fragments/ask_call.dart';
 import 'package:flutter_app_test/fragments/ask_question.dart';
+import 'package:flutter_app_test/fragments/forgot_password.dart';
 import 'package:flutter_app_test/fragments/library_item.dart';
 import 'package:flutter_app_test/pages/autorization.dart';
 import 'package:flutter_app_test/pages/course.dart';
@@ -274,6 +275,9 @@ class _HomePageState extends State<HomePage> {
                   break;
                 case '/ask_question':
                   builder = (BuildContext context) => AskQuestion();
+                  break;
+                case '/forgot_password':
+                  builder = (BuildContext context) => ForgotPassword();
                   break;
                 case '/libraryitem':
                   builder = (BuildContext context) => LibraryItem();

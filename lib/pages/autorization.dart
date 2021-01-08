@@ -81,6 +81,16 @@ class _Autorization extends State<Autorization> {
           LoginForm(context),
           SizedBox(
             width: double.infinity,
+            height: 10,
+          ),
+          GestureDetector(
+            onTap: () {
+             navigationMain.currentState.pushNamedWithoutHistory('/forgot_password');
+            },
+            child: Text('Забыли пароль?'),
+          ),
+          SizedBox(
+            width: double.infinity,
             height: 150,
           ),
           AutorizationBottomBar(),

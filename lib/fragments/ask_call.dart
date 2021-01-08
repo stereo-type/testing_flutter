@@ -58,8 +58,8 @@ class _AskCallState extends State<AskCall> {
   _changedValue(value) {
     setState(() {
       _dropDownValue = value;
-      _thirdNode.unfocus();
-      FocusScope.of(context).requestFocus(_fourthNode);
+      _firstNode.unfocus();
+      FocusScope.of(context).requestFocus(_secondNode);
     });
   }
 
@@ -111,36 +111,6 @@ class _AskCallState extends State<AskCall> {
       child: Form(
         key: _formCallKey,
         child: Column(children: [
-          CupertinoTextField(
-            controller: _nameController,
-            focusNode: _firstNode,
-            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-            placeholder: 'Имя',
-            textInputAction: TextInputAction.next,
-            onSubmitted: (String value) async {
-              _firstNode.unfocus();
-              FocusScope.of(context).requestFocus(_secondNode);
-            },
-          ),
-          SizedBox(
-            width: double.infinity,
-            height: 10,
-          ),
-          CupertinoTextField(
-            controller: _phoneController,
-            focusNode: _secondNode,
-            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-            placeholder: 'Телефон',
-            textInputAction: TextInputAction.next,
-            onSubmitted: (String value) async {
-              _secondNode.unfocus();
-              FocusScope.of(context).requestFocus(_thirdNode);
-            },
-          ),
-          SizedBox(
-            width: double.infinity,
-            height: 10,
-          ),
           Row(
             children: [
               Flexible(
@@ -153,7 +123,7 @@ class _AskCallState extends State<AskCall> {
                   _dropDownValue,
                   _changedValue,
                   _questions,
-                  focusNode: _thirdNode,
+                  focusNode: _firstNode,
                 ),
               ),
             ],
@@ -162,6 +132,37 @@ class _AskCallState extends State<AskCall> {
             width: double.infinity,
             height: 10,
           ),
+          CupertinoTextField(
+            controller: _nameController,
+            focusNode: _secondNode,
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            placeholder: 'Имя',
+            textInputAction: TextInputAction.next,
+            onSubmitted: (String value) async {
+              _secondNode.unfocus();
+              FocusScope.of(context).requestFocus(_thirdNode);
+            },
+          ),
+          SizedBox(
+            width: double.infinity,
+            height: 10,
+          ),
+          CupertinoTextField(
+            controller: _phoneController,
+            focusNode: _thirdNode,
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            placeholder: 'Телефон',
+            textInputAction: TextInputAction.next,
+            onSubmitted: (String value) async {
+              _thirdNode.unfocus();
+              FocusScope.of(context).requestFocus(_fourthNode);
+            },
+          ),
+          SizedBox(
+            width: double.infinity,
+            height: 10,
+          ),
+
           CupertinoTextField(
             focusNode: _fourthNode,
             maxLines: 5,
