@@ -4,6 +4,7 @@ import 'package:flutter_app_test/fragments/ask_call.dart';
 import 'package:flutter_app_test/fragments/ask_question.dart';
 import 'package:flutter_app_test/fragments/forgot_password.dart';
 import 'package:flutter_app_test/fragments/library_item.dart';
+import 'package:flutter_app_test/fragments/user_info_edit.dart';
 import 'package:flutter_app_test/pages/course.dart';
 import 'package:flutter_app_test/pages/home_page.dart';
 import 'package:flutter_app_test/pages/user_info.dart';
@@ -67,6 +68,9 @@ class _NavigationState extends State<Navigation> {
             break;
           case '/user_info':
             builder = (BuildContext context) => UserInfoPage();
+            break;
+          case '/user_info_edit':
+            builder = (BuildContext context) => UserInfoEdit();
             break;
           case '/libraryitem':
             builder = (BuildContext context) => LibraryItem();

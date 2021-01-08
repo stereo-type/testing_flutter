@@ -44,7 +44,7 @@ class _MyDrawerState extends State<MyDrawer> {
       var d = drawerItems[i];
       drawerOptions.add(ListTile(
         leading: Icon(d.icon, color: mainColor),
-        title: Text(d.title),
+        title: Text(d.title, style: TextStyle(fontSize: 15),),
         selected: i == widget.index,
         onTap: () => widget.callback(i),
       ));

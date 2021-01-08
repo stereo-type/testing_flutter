@@ -57,7 +57,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
   var _pays = [];
   List<String> _headers = ['Информация', 'Платежи'];
 
-  goToFormUser() {}
+  goToFormUser() {
+    navigationMain.currentState.pushNamed('/user_info_edit', arguments: {'user': _data});
+  }
 
   setPid(pid) {
     setState(() {
