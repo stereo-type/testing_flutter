@@ -5,6 +5,7 @@ import 'package:flutter_app_test/models/lib_webinar.dart';
 import 'package:flutter_app_test/models/modules.dart';
 import 'package:flutter_app_test/models/sections.dart';
 import 'package:flutter_app_test/models/user.dart';
+import 'package:flutter_app_test/models/user_info.dart';
 import 'package:flutter_app_test/pages/home_page.dart';
 import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
@@ -146,5 +147,38 @@ getUserinfo(BuildContext context, DatabaseHelper db) async {
     await db.insert_record('user', user.toMap());
   } else {
     showToast(context, text: result['answer']);
+  }
+}
+
+
+getData(context, callback, pid) async {
+  var result = await sendPost('getpersonaldata', {"id": pid.toString()});
+  if (result['error'] == false) {
+    var answer = result['answer'][0];
+    // print(answer);
+    var info = UserInfo(
+        int.parse(answer["id"].toString()),
+        answer["firstname"],
+        answer["lastname"],
+        (answer["email"] != null && answer["email"] != 'null')
+            ? answer["email"]
+            : '',
+        (answer["institution"] != null && answer["institution"] != 'null')
+            ? answer["institution"]
+            : '',
+        (answer["department"] != null && answer["department"] != 'null')
+            ? answer["department"]
+            : '',
+        (answer["city"] != null && answer["city"] != 'null')
+            ? answer["city"]
+            : '',
+        (answer["description"] != null && answer["description"] != 'null')
+            ? answer["description"]
+            : '',
+        answer["programdata"]);
+    callback(info);
+  } else {
+    showToast(context, text: result['answer']);
+    callback([], true);
   }
 }

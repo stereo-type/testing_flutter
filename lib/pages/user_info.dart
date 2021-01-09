@@ -10,38 +10,6 @@ import 'package:flutter_app_test/utils/settings.dart';
 import 'package:flutter_app_test/utils/utils.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-getData(context, callback, pid) async {
-  var result = await sendPost('getpersonaldata', {"id": pid.toString()});
-  if (result['error'] == false) {
-    var answer = result['answer'][0];
-    var info = UserInfo(
-        int.parse(answer["id"].toString()),
-        answer["firstname"],
-        answer["lastname"],
-        (answer["email"] != null && answer["email"] != 'null')
-            ? answer["email"]
-            : '',
-        (answer["institution"] != null && answer["institution"] != 'null')
-            ? answer["institution"]
-            : '',
-        (answer["department"] != null && answer["department"] != 'null')
-            ? answer["department"]
-            : '',
-        (answer["city"] != null && answer["city"] != 'null')
-            ? answer["city"]
-            : '',
-        (answer["description"] != null && answer["description"] != 'null')
-            ? answer["description"]
-            : '',
-        answer["programdata"]);
-
-    callback(info);
-  } else {
-    showToast(context, text: result['answer']);
-    callback([], true);
-  }
-}
-
 class UserInfoPage extends StatefulWidget {
   UserInfoPage({Key key}) : super(key: key);
 
@@ -58,7 +26,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
   List<String> _headers = ['Информация', 'Платежи'];
 
   goToFormUser() {
-    navigationMain.currentState.pushNamed('/user_info_edit', arguments: {'user': _data});
+    navigationMain.currentState.pushNamed('/user_info_edit');
   }
 
   setPid(pid) {
@@ -92,7 +60,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
           programdata['libonline'] +
           programdata['docs'];
       _pays = programdata['payblocks'];
-      print(_pays);
     });
   }
 
@@ -106,7 +73,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
       children: [
         PageHeader(header: 'Мои данные'),
         Padding(
-          padding: EdgeInsets.only(top: 15, bottom: 5),
+          padding: EdgeInsets.only(top: 15, bottom: 10),
           child: Container(
             padding: EdgeInsets.only(left: 10),
             alignment: Alignment.centerLeft,
@@ -171,7 +138,6 @@ getInfoCard(items, index, mycallback) {
 }
 
 getPayCard(items, index, mycallback) {
-  print(int.parse(items[0]['ispay'].toString()) == 1);
   return Card(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
